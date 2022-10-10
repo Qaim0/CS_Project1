@@ -163,12 +163,10 @@ def create_account(entry1, entry2, entry3):
 
 
     password = f"Sim{dob[0]}{dob[1]}{dob[2]}"
-    hashed_encrypt = hashlib.md5(password.encode())
-    hashed_password = hashed_encrypt.hexdigest()
     messagebox.showinfo(message=f"Username: {student_id}\n\n"
                                 f"password: {password}")
     dob = f"{dob[0]}-{dob[1]}-{dob[2]}" #converts into YYYY/MM/DD
-    sql_functions.insert_record_users(student_id, dob, firstname, surname, hashed_password)
+    sql_functions.insert_record_users(student_id, dob, firstname, surname, password)
 
 
 def change_tab():
@@ -277,33 +275,6 @@ def account_info_page(frame): # need to add parameters of entries
     change_pass_button.place(x=480, y=320)
 
 
-def login():
-    window = Tk()
-    window.geometry("800x400")
-    window.config(bg=my_grey)
-    Label(window, text="Enter the following details", width=20, font=("Gotham", 20, 'bold'), fg="white", bg="#333333").place(
-        x=main_labelx, y=main_labely)
-    Label(window, text="ID NUMBER", font=("Gotham", 9), fg=my_blue, bg=my_grey).place(x=first_labelx, y=first_labely)
-    Label(window, text="PASSWORD", font=("Gotham", 9), fg=my_blue, bg=my_grey).place(x=first_labelx, y=first_labely+90)
-
-
-
-
-
-    id_entry = Entry(window, width=30, font=("Gotham", 15), fg="white", bg=my_grey)
-    password_entry = Entry(window, width=30, font=("Gotham", 15), fg="white", bg=my_grey)
-
-    reset_password = Button(window, text="RESET PASSWORD", font=("Gotham", 7), fg=my_blue, bg=my_grey, relief=FLAT, activebackground=my_grey, bd=0, command=lambda :validate_user(id_entry.get(), "RESET", None, None, ""))
-    submit = Button(window, text="Submit", padx=5, pady=5, width=10, bg="#0a95ad", fg="white",
-                    font=(my_font, 12, 'bold'), command=lambda: validate_user(id_entry.get(), "LOGIN", password_entry.get(), None, window))
-    reset_password.place(x=480, y=240)
-
-
-    id_entry.place(x=250, y=110)
-    password_entry.place(x=250, y=200)
-    submit.place(x=350, y=330)
-    window.mainloop()
-
 def validate_user(id, option, password, int_var, w):
     error = False
     if option == "RESET" or option == "ADMIN_SEARCH":  # table is required for first option as username check can be used for several tables
@@ -345,4 +316,3 @@ def validate_user(id, option, password, int_var, w):
             messagebox.showerror(message="Username/Password invalid")
 
 
-login()

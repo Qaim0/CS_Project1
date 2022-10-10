@@ -36,3 +36,4 @@ def login():
     password_entry.place(x=250, y=200)
     submit.place(x=350, y=330)
     window.mainloop()
+login()

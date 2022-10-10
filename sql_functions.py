@@ -28,7 +28,9 @@ def create_table_requests():
 def insert_record_users(id, dob, firstname, surname, password):
     script = "INSERT INTO USERS (ID, DOB, FIRSTNAME, SURNAME, EMAIL, ACCESS, PASSWORD) \
              VALUES (?, ?, ?, ?, ?, ?, ?);"
-    conn.execute(script, (id, dob, firstname, surname, None, True, password))
+    hashed_encrypt = hashlib.md5(password.encode())
+    hashed_password = hashed_encrypt.hexdigest()
+    conn.execute(script, (id, dob, firstname, surname, None, True, hashed_password))
     conn.commit()
 
 
@@ -50,7 +52,7 @@ def num_of_records(access_type):
 def show_request_records():
     cursor = conn.execute("SELECT * from REQUESTS")
     return cursor.fetchall()
-print(show_request_records())
+
 
 
 
@@ -104,6 +106,4 @@ def user_has_access(id):
     return True
 
 
-
-create_table_users()
-create_table_requests()
+# insert_record_users('Admin01', "", "", "", '328782')

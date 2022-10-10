@@ -1,5 +1,6 @@
 from sql_functions import *
 from Admin_Window import account_action, admin_window
+
 def validate(id, option, password, int_var, w):
     error = False
     if option == "RESET" or option == "ADMIN_SEARCH":  # table is required for first option as username check can be used for several tables
