@@ -124,16 +124,17 @@ class Planet:
         if solar_system.default_vals:
             self.AU = planet_elements[0] + (planet_rates[0] * jul_centuries)  # AU (CONSTANT) aGen
             self.eccentricity = planet_elements[1] + (planet_rates[1] * jul_centuries)  # CONSTANT eGen
-            orbit_incl = planet_elements[2] + (planet_rates[2] * jul_centuries)  # ORBIT INCLINCATION: CONSTANT iGen
-            self.orbit_incl = orbit_incl % 360
-            long_asc_node = planet_elements[5] + (
-                    planet_rates[5] * jul_centuries)  # LONGITUDE OF ASCENDING NODE (CONSTANT) WGen
-            self.long_asc_node = long_asc_node % 360
 
-            long_perihelion = planet_elements[4] + (planet_rates[4] * jul_centuries)  # LONGITUDE OF PERIHELION wGen
-            self.long_perihelion = long_perihelion % 360
-            if self.long_perihelion < 0:
-                self.long_perihelion = 360 + self.long_perihelion
+        orbit_incl = planet_elements[2] + (planet_rates[2] * jul_centuries)  # ORBIT INCLINCATION: CONSTANT iGen
+        self.orbit_incl = orbit_incl % 360
+        long_asc_node = planet_elements[5] + (
+                planet_rates[5] * jul_centuries)  # LONGITUDE OF ASCENDING NODE (CONSTANT) WGen
+        self.long_asc_node = long_asc_node % 360
+
+        long_perihelion = planet_elements[4] + (planet_rates[4] * jul_centuries)  # LONGITUDE OF PERIHELION wGen
+        self.long_perihelion = long_perihelion % 360
+        if self.long_perihelion < 0:
+            self.long_perihelion = 360 + self.long_perihelion
 
         orbit_pos = planet_elements[3] + (planet_rates[3] * jul_centuries)  # LGen
         orbit_pos = orbit_pos % 360
@@ -273,6 +274,10 @@ def get_planet_coords(century, boolean, move_x, move_y, disable_movement):
 
             point = (solar_system.instances[i].x, solar_system.instances[i].y)
 
+
+            # if len(solar_system.instances[1].orbit) > 300:
+            #     solar_system.instances[1].orbit = []
+
             if point not in solar_system.instances[i].orbit:
                 solar_system.instances[i].orbit.append(point)
 
@@ -321,6 +326,7 @@ def change_page(settings_apply_bool, info_bool, instructions_bool, physics_bool,
 
 def set_default_elements(index, sliders):
     planet = solar_system.instances[index+1]
+    print(planet)
     if solar_system.default_vals:
         sliders[0].setValue(planet.AU)
         sliders[1].setValue(planet.eccentricity)
@@ -328,11 +334,14 @@ def set_default_elements(index, sliders):
         sliders[3].setValue(planet.long_asc_node)
         sliders[4].setValue(planet.long_perihelion)
     else:
+        for slider in sliders:
+            if slider.selected:
+                planet.orbit = []
         planet.AU = sliders[0].getValue()
         planet.eccentricity = sliders[1].getValue()
-        planet.orbit_incl = sliders[2].getValue()
-        planet.long_asc_node = sliders[3].getValue()
-        planet.long_perihelion = sliders[4].getValue()
+        # planet.orbit_incl = sliders[2].getValue()
+        # planet.long_asc_node = sliders[3].getValue()
+        # planet.long_perihelion = sliders[4].getValue()
 
 
 def blit_text(surface, text, pos, color, font=pygame.font.SysFont('Consolas', 15)):
@@ -661,6 +670,8 @@ def main():
 
 
         #pygame.draw.rect(window, 'red', pygame.Rect(0, 0, 60, 60), 2)
+        solar_system.default_vals = False
+
         pygame.display.update()
 
 main()
