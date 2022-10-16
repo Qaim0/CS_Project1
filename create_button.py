@@ -13,6 +13,9 @@ class button():
         self.text = text
         self.button_clicked = False
         self.bd_colour = 'orange'
+        self.highlight_btn = False
+    def highlight_button(self):
+        self.bd_colour = ('orange')
 
     def draw(self, win, outline=True):
         # Call this method to draw the button on the screen
@@ -22,8 +25,7 @@ class button():
         self.buttonRect = pygame.draw.rect(win, self.colour, (self.x, self.y, self.width, self.height))
 
         if self.buttonRect.collidepoint(pygame.mouse.get_pos()) or self.button_clicked:
-
-                self.bd_colour = ('orange')
+            self.highlight_button()
 
         else:
             self.bd_colour = 'grey'
@@ -32,12 +34,12 @@ class button():
 
         if self.text != '':
             if self.buttonRect.collidepoint(pygame.mouse.get_pos()) or self.button_clicked:
-                txt_colour = 'orange'
+                self.bd_colour = 'orange'
             else:
-                txt_colour = 'grey'
+                self.bd_colour = 'grey'
 
             font = pygame.font.SysFont('Gotham', 20, 'bold')
-            text = font.render(self.text, 1, txt_colour)
+            text = font.render(self.text, 1, self.bd_colour)
             win.blit(text, (
             self.x + (self.width / 2 - text.get_width() / 2), self.y + (self.height / 2 - text.get_height() / 2)))
 
@@ -52,6 +54,9 @@ class button():
 
     def redraw(self, surf):
         self.draw(surf, (0, 0, 0))
+
+
+
 
 def btn_clicked(selected_btn, buttons):
     selected_btn.button_clicked = True
