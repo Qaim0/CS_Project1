@@ -109,6 +109,7 @@ class Planet:
         self.radius_vector = 0
         self.full_rotation_points = []
         self.rotated = False
+        self.default_vals = True
 
     # ------Modifiable planet elements-----#
         self.eccentricity = 0
@@ -122,12 +123,15 @@ class Planet:
         k = 0
 
         i = planet_lst.index(planet)
+
         planet_elements = all_planetElements[i]
         planet_rates = all_planetRates[i]
 
-        if solar_system.default_vals:
+        if solar_system.instances[i+1].default_vals:
             self.AU = planet_elements[0] + (planet_rates[0] * jul_centuries)  # AU (CONSTANT) aGen
             self.eccentricity = planet_elements[1] + (planet_rates[1] * jul_centuries)  # CONSTANT eGen
+        else:
+            print(self.name)
 
         orbit_incl = planet_elements[2] + (planet_rates[2] * jul_centuries)  # ORBIT INCLINCATION: CONSTANT iGen
         self.orbit_incl = orbit_incl % 360
@@ -370,15 +374,19 @@ def change_page(settings_apply_bool, info_bool, instructions_bool, physics_bool,
     show_settings = settings_bool
     show_apply_btn = settings_apply_bool
 
-def set_default_elements(index, sliders):
+def set_default_elements(index, sliders, combo_selected):
     planet = solar_system.instances[index+1]
-    if solar_system.default_vals:
+
+    if planet.default_vals:
         sliders[0].setValue(planet.AU)
         sliders[1].setValue(planet.eccentricity)
     else:
         for slider in sliders:
             if slider.selected:
                 planet.orbit = []
+        if combo_selected:
+            sliders[0].setValue(planet.AU)
+            sliders[1].setValue(planet.eccentricity)
         planet.AU = sliders[0].getValue()
         planet.eccentricity = sliders[1].getValue()
         # planet.orbit_incl = sliders[2].getValue()
@@ -423,21 +431,6 @@ def draw_rect_alpha(surface, color, rect):
     surface.blit(shape_surf, rect)
 
 
-def set_val_bools(custom_btn, default_btn, combo_boc, count):
-    if custom_btn.button_clicked:
-
-        default_btn.button_clicked = False
-        solar_system.default_vals = False
-    else:
-        count = 0
-
-        custom_btn.button_clicked = False
-        solar_system.default_vals = True
-    if count == 0:
-        solar_system.instances[combo_boc.selected + 1].orbit = []
-        count = 1
-
-
 
 def main():
     global WIDTH, HEIGHT, new_date, window
@@ -469,6 +462,7 @@ def main():
     submit_btn = button(1750, 900, 120, 22, 'SUBMIT')
     default_vals_btn = button(1750, 1000, 120, 22, 'DEFAULT VALS')
     custom_vals_btn = button(1750, 800, 120, 22, 'CUSTOM VALS')
+    reset_planet_vals_btn = button(1750, 900, 120, 22, 'RESET PLANET VALS')
 
     planet_info_btn.button_clicked = True
     default_vals_btn.button_clicked = True
@@ -604,6 +598,9 @@ def main():
                     if default_vals_btn.isOver(pos):
                         default_vals_btn.button_clicked = True
 
+                    if reset_planet_vals_btn.isOver(pos):
+                        reset_planet_vals_btn.button_clicked = True
+
                     for planet in solar_system.instances:
                         if planet.circleRect.collidepoint(pygame.mouse.get_pos()):
                             if planet.clicked_on:
@@ -706,19 +703,35 @@ def main():
                 blit_line(i, 1370, element_labels_y, 20)
                 element_labels_y += 100
 
-            if custom_vals_btn.button_clicked:
-                custom_vals_btn.button_clicked = False
-                default_vals_btn.button_clicked = False
-                solar_system.default_vals = False
-                custom_vals_btn.highlight_button()
-            elif default_vals_btn.button_clicked:
-                default_vals_btn.button_clicked = False
-                default_vals_btn.highlight_button()
-                custom_vals_btn.button_clicked = False
-                solar_system.default_vals = True
-                solar_system.instances[physics_combo_box.selected + 1].orbit = []
+            planet = solar_system.instances[(physics_combo_box.selected)+1]
+            buttons = [custom_vals_btn, default_vals_btn, reset_planet_vals_btn]
 
-            set_default_elements(physics_combo_box.selected, sliders)
+            if custom_vals_btn.button_clicked:
+                for btn in buttons:
+                    btn.button_clicked = False
+                    btn.highlight_btn = False
+                custom_vals_btn.highlight_btn = True
+                planet.default_vals = False
+
+            elif default_vals_btn.button_clicked:
+                for btn in buttons:
+                    btn.button_clicked = False
+                    btn.highlight_btn = False
+                default_vals_btn.highlight_btn = True
+                solar_system.default_vals = True
+                planet.orbit = []
+                planet.default_vals = True
+
+            elif reset_planet_vals_btn.button_clicked:
+                for btn in buttons:
+                    btn.button_clicked = False
+                    btn.highlight_btn = False
+                planet.default_vals = True
+                planet.orbit = []
+                reset_planet_vals_btn.highlight_btn = True
+
+
+            set_default_elements(physics_combo_box.selected, sliders, physics_combo_box.clicked_on_option)
             # set_val_bools(custom_vals_btn, default_vals_btn, physics_combo_box, count)
 
 
@@ -730,6 +743,7 @@ def main():
             default_vals_btn.redraw(window)
             custom_vals_btn.redraw(window)
             physics_combo_box.draw(window)
+            reset_planet_vals_btn.redraw(window)
 
         elif not display_menu:
             for i in range(len(sliders)):

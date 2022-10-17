@@ -39,6 +39,7 @@ class OptionBox():
         self.menu_active = False
         self.active_option = -1
         self.y = y
+        self.clicked_on_option = False
 
     def draw(self, surf):
         pygame.draw.rect(surf, self.highlight_color if self.menu_active else self.color, self.rect)
@@ -76,9 +77,12 @@ class OptionBox():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if self.menu_active:
                     self.draw_menu = not self.draw_menu
+                    self.clicked_on_option = False
+
                 elif self.draw_menu and self.active_option >= 0:
                     self.selected = self.active_option
                     self.draw_menu = False
+                    self.clicked_on_option = True
                     return self.active_option
         return -1
 
