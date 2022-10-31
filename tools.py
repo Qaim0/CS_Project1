@@ -73,13 +73,16 @@ class OptionBox():
         if not self.menu_active and self.active_option == -1:
             self.draw_menu = False
 
+
         for event in event_list:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                if self.menu_active:
+                if self.menu_active: # if optionbox clicked on
                     self.draw_menu = not self.draw_menu
                     self.clicked_on_option = False
+                    print('ee')
 
-                elif self.draw_menu and self.active_option >= 0:
+                elif self.draw_menu and self.active_option >= 0: # if optionbox option clicked on
+                    print('aaaaaaaaaaaaaaaaaaaaaaaaa')
                     self.selected = self.active_option
                     self.draw_menu = False
                     self.clicked_on_option = True

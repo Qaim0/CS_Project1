@@ -28,7 +28,7 @@ display_menu = False
 show_settings = False
 show_instructions = False
 
-# -----------IMAGES-------------
+#-----------IMAGES-------------
 
 sunImg = pygame.image.load('sun.png').convert_alpha()
 mercuryImg = pygame.image.load('mercury.png').convert_alpha()
@@ -41,8 +41,11 @@ uranusImg = pygame.image.load('uranus.png').convert_alpha()
 neptuneImg = pygame.image.load('neptune.png').convert_alpha()
 solarSystemImg = pygame.image.load('solar_system.jpg').convert_alpha()
 solarSystemImg = pygame.transform.scale(solarSystemImg, (400, 150))
+space_backgroundImg = pygame.transform.scale(pygame.image.load('space_background'), (1920, 1080))
+
 
 imgs = [sunImg, mercuryImg, venusImg, earthImg, marsImg, jupiterImg, saturnImg, uranusImg, neptuneImg]
+
 for x in range(len(imgs)):
     imgs[x] = pygame.transform.scale(imgs[x], (325, 170))
 
@@ -62,6 +65,8 @@ class Solarsystem:
         self.overlay_colour = dark_grey_colours[1]
         self.txt_colour = dark_grey_colours[2]
         self.window_colour = dark_grey_colours[0]
+        self.date_edited = False
+
 
 
 
@@ -109,7 +114,9 @@ class Planet:
         self.radius_vector = 0
         self.full_rotation_points = []
         self.rotated = False
+        self.rotated_once = False
         self.default_vals = True
+        self.append_orbit = True
 
     # ------Modifiable planet elements-----#
         self.eccentricity = 0
@@ -123,15 +130,12 @@ class Planet:
         k = 0
 
         i = planet_lst.index(planet)
-
         planet_elements = all_planetElements[i]
         planet_rates = all_planetRates[i]
 
-        if solar_system.instances[i+1].default_vals:
+        if self.default_vals:
             self.AU = planet_elements[0] + (planet_rates[0] * jul_centuries)  # AU (CONSTANT) aGen
             self.eccentricity = planet_elements[1] + (planet_rates[1] * jul_centuries)  # CONSTANT eGen
-        else:
-            print(self.name)
 
         orbit_incl = planet_elements[2] + (planet_rates[2] * jul_centuries)  # ORBIT INCLINCATION: CONSTANT iGen
         self.orbit_incl = orbit_incl % 360
@@ -202,17 +206,39 @@ class Planet:
     def draw(self, draw_line, shift_x, shift_y):  # radius scale
         global line_endx
         x = self.x * self.SCALE + WIDTH / 2
-        y = self.y * self.SCALE + HEIGHT / 2
+        y = -self.y * self.SCALE + HEIGHT / 2
+        points = []
+
+
+
         if len(self.orbit) > 2:
             updated_points = []
-            for point in self.orbit:
-                x, y = point
-                x = x * self.SCALE + WIDTH / 2
-                y = -y * self.SCALE + HEIGHT / 2
-                updated_points.append((x + shift_x, y + shift_y))
+            updated_points2 = []
+            if self.rotated_once:
+                for point in self.orbit:
+                    orbit_x, orbit_y = point
+                    orbit_x = orbit_x * self.SCALE + WIDTH / 2
+                    orbit_y = -orbit_y * self.SCALE + HEIGHT / 2
+                    updated_points2.append((orbit_x + shift_x, orbit_y + shift_y))
+            else:
+                for point in self.orbit:
+                    orbit_x, orbit_y = point
+                    orbit_x = orbit_x * self.SCALE + WIDTH / 2
+                    orbit_y = -orbit_y * self.SCALE + HEIGHT / 2
+                    updated_points.append((orbit_x + shift_x, orbit_y + shift_y))
+
+
             if draw_line:
-                pygame.draw.lines(window, self.colour, False, updated_points, 1)
+                if self.rotated_once:
+                    points = updated_points2
+                else:
+                    points = updated_points
+                pygame.draw.aalines(window, self.colour, False, points, 1)
+
+
         self.circleRect = pygame.draw.circle(window, self.colour, (x + shift_x, y + shift_y), self.radius)
+
+
 
         if self.circleRect.collidepoint(pygame.mouse.get_pos()) or self.clicked_on:
             outer_circle_rect = pygame.draw.circle(window, solar_system.txt_colour, (x + shift_x, y + shift_y), self.radius + 5, width=1)
@@ -228,24 +254,37 @@ class Planet:
     def check_fully_rotated(self):
         dp = 12
         count = 0
-        # if round(self.x, dp) == round(self.startx, dp):
-        #     if round(self.y, dp) == round(self.starty, dp):
+        # if round(self.startx) == round(self.x):
+        #     if round(self.starty) == round(self.y):
+        #         print('collide3d')
 
-        x_diff = abs(-self.startx + self.circleRect.x)
-        y_diff = abs(-self.starty + self.circleRect.y)
+
+        x_diff = round((self.startx*solar_system.scale) - (self.x*solar_system.scale), 4)
+        y_diff = round((self.starty*solar_system.scale) - (self.y*solar_system.scale), 4)
+
+        if self.name == 'Venus':
+            print(len(self.orbit))
+
+        # if self.name == 'Earth':
+        #     print([x_diff, y_diff])
+        # print(ticks)
         ticks = pygame.time.get_ticks()
+            # print([x_diff, y_diff])
 
 
 
 
-
-
-        if y_diff == 120:
-                print('sdad')
+        if x_diff <= 0.0001 and y_diff <= 0.0001 and y_diff >= -0.000:
+            if ticks > 3000:
                 self.rotated = True
+                # if self.name == 'Venus':
+                    # print('sadasdasdasd')
+                if not self.rotated_once:
+                    self.rotated_once = True
 
-        # print([self.circleRect.x, self.startx])
-        # print([self.circleRect.y, self.starty])
+
+            # print([self.circleRect.x, self.startx])
+            # print([self.circleRect.y, self.starty])
 
 
 def hex_to_rgb(value):
@@ -258,6 +297,11 @@ def create_sub_windows(leftwidth, leftheight, rightwidth, height):
     draw_rect_alpha(window, rgb, (leftwidth, 0, leftwidth, height))
 
 
+def set_start_x(planet):
+    planet.startx = planet.x
+    planet.starty = planet.y
+    planet.rotated = False
+    planet.rotated_once = False
 
 
 
@@ -282,7 +326,7 @@ def create_planets():
         entity.generate_mini_info(entity)
 
 
-def get_planet_coords(century, boolean, move_x, move_y, disable_movement, first_run):
+def get_planet_coords(century, boolean, move_x, move_y, disable_movement, first_run, draw_line):
     solar_system.instances[0].draw(boolean, move_x, move_y)
     if not disable_movement:
         mercury_x, mercury_y = solar_system.instances[1].get_planet_elements('Mercury', century)
@@ -298,43 +342,44 @@ def get_planet_coords(century, boolean, move_x, move_y, disable_movement, first_
         planetxvals = [mercury_x, venus_x, earth_x, mars_x, jupiter_x, saturn_x, uranus_x, neptune_x]
         planetyvals = [mercury_y, venus_y, earth_y, mars_y, jupiter_y, saturn_y, uranus_y, neptune_y]
 
-        for i in range(1, len(solar_system.instances)):  # to miss out the sun
-            solar_system.instances[i].x = planetxvals[i - 1]
-            solar_system.instances[i].y = planetyvals[i - 1]
-            solar_system.instances[i].draw(boolean, move_x, move_y)
+        for i in range(1, len(solar_system.instances)):
+            planet = solar_system.instances[i]# to miss out the sun
+            planet.x = planetxvals[i - 1]
+            planet.y = planetyvals[i - 1]
+            planet.draw(boolean, move_x, move_y)
             if first_run:
-                solar_system.instances[i].startx = solar_system.instances[i].circleRect.x
-                solar_system.instances[i].starty = solar_system.instances[i].circleRect.y
+                set_start_x(solar_system.instances[i])
 
 
 
 
-            point = (solar_system.instances[i].x, solar_system.instances[i].y)
+            point = (planet.x, planet.y)
+            if not planet.rotated_once or not planet.default_vals or solar_system.date_edited:
+                planet.orbit.append(point)
+
+
+            # if planet.name == 'Venus':
+            #     print(len(planet.orbit))
+
 
 
             # if len(solar_system.instances[1].orbit) > 300:
-            #     solar_system.instances[1].orbit = []
-
-
-            solar_system.instances[i].orbit.append(point)
-
-            if solar_system.instances[i].rotated == False:
-                solar_system.instances[i].full_rotation_points.append(point)
+            #     solar_system.instances[1].orbit = [0
 
 
 
-            solar_system.instances[i].orbit.append(point)
-            # print(solar_system.instances[i].rotated)
 
-
-            # print(len(solar_system.instances[1].full_rotation_points))
-        solar_system.instances[1].check_fully_rotated()
-
+            planet.check_fully_rotated()
+            if planet.rotated:
+                planet.rotated = False
 
 
     else:
         for i in range(len(solar_system.instances)):
             solar_system.instances[i].draw(boolean, move_x, move_y)
+
+
+
 
 
 def show_planet_info():
@@ -374,8 +419,9 @@ def change_page(settings_apply_bool, info_bool, instructions_bool, physics_bool,
     show_settings = settings_bool
     show_apply_btn = settings_apply_bool
 
-def set_default_elements(index, sliders, combo_selected):
-    planet = solar_system.instances[index+1]
+def set_default_elements(combo, sliders):
+
+    planet = solar_system.instances[combo.selected+1]
 
     if planet.default_vals:
         sliders[0].setValue(planet.AU)
@@ -384,14 +430,25 @@ def set_default_elements(index, sliders, combo_selected):
         for slider in sliders:
             if slider.selected:
                 planet.orbit = []
-        if combo_selected:
+        set_start_x(planet)
+
+        # print(combo.clicked_on_option)
+        if combo.clicked_on_option:
             sliders[0].setValue(planet.AU)
             sliders[1].setValue(planet.eccentricity)
+            combo.clicked_on_option = False
+
         planet.AU = sliders[0].getValue()
         planet.eccentricity = sliders[1].getValue()
         # planet.orbit_incl = sliders[2].getValue()
         # planet.long_asc_node = sliders[3].getValue()
         # planet.long_perihelion = sliders[4].getValue()
+    if solar_system.default_vals:
+        for planet in solar_system.instances:
+            planet.default_vals = True
+            planet.orbit = []
+        solar_system.default_vals = False
+
 
 
 def blit_text(surface, text, pos, color, font=pygame.font.SysFont('Consolas', 15)):
@@ -432,13 +489,13 @@ def draw_rect_alpha(surface, color, rect):
 
 
 
+
 def main():
     global WIDTH, HEIGHT, new_date, window
     count = 0
 
     drawline = True
     sim_running = True
-    date_editing = False
     first_run = True
     reset_orbit = False
 
@@ -462,7 +519,7 @@ def main():
     submit_btn = button(1750, 900, 120, 22, 'SUBMIT')
     default_vals_btn = button(1750, 1000, 120, 22, 'DEFAULT VALS')
     custom_vals_btn = button(1750, 800, 120, 22, 'CUSTOM VALS')
-    reset_planet_vals_btn = button(1750, 900, 120, 22, 'RESET PLANET VALS')
+    reset_all_vals = button(1750, 900, 120, 22, 'RESET VALS')
 
     planet_info_btn.button_clicked = True
     default_vals_btn.button_clicked = True
@@ -477,6 +534,7 @@ def main():
     leftsurf = window.subsurface(leftrect)
     WIDTH = leftsurf.get_width()    # main simulation width and height
     HEIGHT = leftsurf.get_height()
+    print(WIDTH, HEIGHT)
 
 
 
@@ -500,12 +558,14 @@ def main():
         shift_distance = 10
 
         window.fill(solar_system.window_colour)
+        # window.blit(space_backgroundImg, (0, 0))
 
         blit_text(window, f'FPS: {round(clock.get_fps())}',  (20, 200), 'white')
 
 
         jul_century = ((gregorian_to_julian(year, month, day) - julian_epoch) / jul_century_in_jul_days)
-        get_planet_coords(jul_century, drawline, shift_x, shift_y, date_editing, first_run)
+        get_planet_coords(jul_century, drawline, shift_x, shift_y, solar_system.date_edited
+, first_run, drawline)
 
         show_controls()
         create_sub_windows(leftwidth, leftheight, rightwidth, height)
@@ -521,7 +581,7 @@ def main():
             blit_line('SIMULATION PAUSED', 600, 1020, 30)
 
             try:
-                date_editing = True
+                solar_system.date_edited = True
                 new_date = date_textbox.getText()
                 date_lst = new_date.split('-')
 
@@ -538,7 +598,7 @@ def main():
 
                 datetime.datetime(year=new_year, month=new_month, day=new_day)
             except:
-                date_editing = False
+                solar_system.date_edited = False
 
 
 
@@ -550,7 +610,7 @@ def main():
                 day = float(date_lst[2])
                 day = int(day)
 
-                date_editing = False
+                solar_system.date_edited = False
 
         planet_info_btn.redraw(window)
         physics_btn.redraw(window)
@@ -597,9 +657,8 @@ def main():
                         custom_vals_btn.button_clicked = True
                     if default_vals_btn.isOver(pos):
                         default_vals_btn.button_clicked = True
-
-                    if reset_planet_vals_btn.isOver(pos):
-                        reset_planet_vals_btn.button_clicked = True
+                    if reset_all_vals.isOver(pos):
+                        reset_all_vals.button_clicked = True
 
                     for planet in solar_system.instances:
                         if planet.circleRect.collidepoint(pygame.mouse.get_pos()):
@@ -703,35 +762,33 @@ def main():
                 blit_line(i, 1370, element_labels_y, 20)
                 element_labels_y += 100
 
-            planet = solar_system.instances[(physics_combo_box.selected)+1]
-            buttons = [custom_vals_btn, default_vals_btn, reset_planet_vals_btn]
-
-            if custom_vals_btn.button_clicked:
-                for btn in buttons:
-                    btn.button_clicked = False
-                    btn.highlight_btn = False
+            if custom_vals_btn.button_clicked:#
                 custom_vals_btn.highlight_btn = True
-                planet.default_vals = False
+                custom_vals_btn.button_clicked = False
+                default_vals_btn.highlight_btn = False
+                default_vals_btn.button_clicked = False
 
-            elif default_vals_btn.button_clicked:
-                for btn in buttons:
-                    btn.button_clicked = False
-                    btn.highlight_btn = False
+                solar_system.default_vals = False
+                solar_system.instances[physics_combo_box.selected + 1].default_vals = False
+                # print(solar_system.instances[physics_combo_box.selected + 1].default_vals)
+            if default_vals_btn.button_clicked:
+                default_vals_btn.button_clicked = False
                 default_vals_btn.highlight_btn = True
+                custom_vals_btn.highlight_btn = False
+                custom_vals_btn.button_clicked = False
+
+                solar_system.default_vals = False
+                solar_system.instances[physics_combo_box.selected + 1].orbit = []
+                solar_system.instances[physics_combo_box.selected + 1].default_vals = True
+            if reset_all_vals.button_clicked:
+                reset_all_vals.button_clicked = False
                 solar_system.default_vals = True
-                planet.orbit = []
-                planet.default_vals = True
+                custom_vals_btn.highlight_btn = False
+                default_vals_btn.highlight_btn = False
 
-            elif reset_planet_vals_btn.button_clicked:
-                for btn in buttons:
-                    btn.button_clicked = False
-                    btn.highlight_btn = False
-                planet.default_vals = True
-                planet.orbit = []
-                reset_planet_vals_btn.highlight_btn = True
+            set_default_elements(physics_combo_box, sliders)
 
 
-            set_default_elements(physics_combo_box.selected, sliders, physics_combo_box.clicked_on_option)
             # set_val_bools(custom_vals_btn, default_vals_btn, physics_combo_box, count)
 
 
@@ -743,7 +800,7 @@ def main():
             default_vals_btn.redraw(window)
             custom_vals_btn.redraw(window)
             physics_combo_box.draw(window)
-            reset_planet_vals_btn.redraw(window)
+            reset_all_vals.redraw(window)
 
         elif not display_menu:
             for i in range(len(sliders)):
@@ -772,7 +829,6 @@ def main():
 
         if first_run:
             first_run = False
-
 
 
 
