@@ -42,8 +42,8 @@ class OptionBox():
         self.clicked_on_option = False
 
     def draw(self, surf):
-        pygame.draw.rect(surf, self.highlight_color if self.menu_active else self.color, self.rect)
-        pygame.draw.rect(surf, (0, 0, 0), self.rect, 2)
+        pygame.draw.rect(surf, self.highlight_color if self.menu_active else self.color, self.rect, 0, 19)
+        pygame.draw.rect(surf, (0, 0, 0), self.rect, 1, 19)
         msg = self.font.render(self.option_list[self.selected], 1, (0, 0, 0))
         surf.blit(msg, msg.get_rect(center=self.rect.center))
 
@@ -91,18 +91,17 @@ class OptionBox():
 
 
 
-def generate_menu(win, solar_system):
+def create_widgets(win, solar_system):
     lables = ['Select mass', 'semi-major axis', 'Eccentricity']
 
 
-    list1 = OptionBox(
-        1700, 300, 160, 40, (150, 150, 150), 'orange', pygame.font.SysFont(None, 30),
+    planets = OptionBox(
+        1750, 300, 160, 40, (150, 150, 150), 'orange', pygame.font.SysFont(None, 30),
         ["Mercury", "Venus", "Earth", "Mars", "Jupiter"])
-    list2 = OptionBox(
+    themes = OptionBox(
         1700, 300, 160, 40, (150, 150, 150), 'orange', pygame.font.SysFont(None, 30),
         ["Dark Standard", "Dark blue", "light"])
-    resolution_dropdown = OptionBox(1700, 500, 160, 40, (150, 150, 150), 'orange', pygame.font.SysFont(None, 30),
-        ['Native fullscreen', "1920 x 1080", "1280 x 720", "2560 x 1440", "3840 x 2160"])
+
 
     slider1 = Slider(win, 1650, 410, 150, 10, min=0.02, max=5, step=0.01)  # for semi major axis
     slider2 = Slider(win, 1650, 510, 150, 10, min=0.00000001, max=0.989, step=0.001)  # for eccentricity
@@ -111,10 +110,20 @@ def generate_menu(win, solar_system):
     output1 = TextBox(win, 1820, 400, 85, 30, fontSize=20, borderThickness=0)
     output2 = TextBox(win, 1820, 500, 85, 30, fontSize=20, borderThickness=0)
 
-    fps_box = TextBox(win, 1705, 400, 150, 45, textColour='black', fontSize=25, colour='grey', borderThickness=0, font=pygame.font.SysFont('Consolas', int(20)))
+    fps_box = TextBox(win, 1750, 400, 150, 45, textColour='black', fontSize=25, colour='grey', borderThickness=0, font=pygame.font.SysFont('Consolas', int(20)))
     date_textbox = TextBox(win, 10, 0, 700, 45, textColour=solar_system.txt_colour, fontSize=25, colour=solar_system.window_colour, borderThickness=0, font=pygame.font.SysFont('Consolas', int(20)))
 
 
+
+    # graph optionboxes
+
+
+    graph_type = OptionBox(1560, 300, 160, 40, (150, 150, 150), 'orange', pygame.font.SysFont(None, 30),
+        ["Distance", "Venus", "Earth", "Mars", "Jupiter"])
+    planet1 = OptionBox(1450, 400, 160, 40, (150, 150, 150), 'orange', pygame.font.SysFont(None, 30),
+        ["Sun", "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"])
+    planet2 = OptionBox(1650, 400, 160, 40, (150, 150, 150), 'orange', pygame.font.SysFont(None, 30),
+        ["Sun", "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"])
 
 
     outputs = [output1, output2]
@@ -122,5 +131,6 @@ def generate_menu(win, solar_system):
     sliders = [slider1, slider2]
 
 
-    return date_textbox, sliders, list1, list2, lables, outputs, fps_box, resolution_dropdown # lists = comboboxes
+    return date_textbox, sliders, planets, themes, lables, outputs, fps_box, graph_type, planet1, planet2
+    # lists = comboboxes
 

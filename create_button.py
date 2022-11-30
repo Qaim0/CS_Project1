@@ -20,7 +20,7 @@ class button():
     def draw(self, win, outline=True):
         # Call this method to draw the button on the screen
         if outline:
-            pygame.draw.rect(win, self.bd_colour, (self.x - 2, self.y - 2, self.width + 4, self.height + 4))
+            pygame.draw.rect(win, self.bd_colour, (self.x - 2, self.y - 2, self.width + 4, self.height + 4), 0, 4)
 
         self.buttonRect = pygame.draw.rect(win, self.colour, (self.x, self.y, self.width, self.height))
 
@@ -59,13 +59,6 @@ class button():
 
 
 
-def btn_clicked(selected_btn, buttons):
-    selected_btn.button_clicked = True
-    for btn in buttons:
-        if btn.button_clicked:
-            btn.button_clicked = False
-            btn.bd_colour = btn.original_colour
-            return True
 
 
 
