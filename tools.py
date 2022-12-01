@@ -111,7 +111,7 @@ def create_widgets(win, solar_system):
     output2 = TextBox(win, 1820, 500, 85, 30, fontSize=20, borderThickness=0)
 
     fps_box = TextBox(win, 1750, 400, 150, 45, textColour='black', fontSize=25, colour='grey', borderThickness=0, font=pygame.font.SysFont('Consolas', int(20)))
-    date_textbox = TextBox(win, 10, 0, 700, 45, textColour=solar_system.txt_colour, fontSize=25, colour=solar_system.window_colour, borderThickness=0, font=pygame.font.SysFont('Consolas', int(20)))
+    date_textbox = TextBox(win, 10, 0, 700, 45, textColour=solar_system.txt_colour, fontSize=25, borderThickness=0, font=pygame.font.SysFont('Consolas', int(20)))
 
 
 

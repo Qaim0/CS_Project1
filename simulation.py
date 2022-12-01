@@ -19,7 +19,7 @@ import datetime
 from planet_info import solar_system_info, instructions, system_info
 from graphs import *
 dark_grey_colours = ['black',  (36, 36, 36), 'white']
-light_colours = ['#dedfe0', (30, 203, 225), 'black']
+light_colours = ['grey', (30, 203, 225), 'black']
 dark_blue_colours = ['#05070f',  (12, 15, 26), 'white']
 
 font = pygame.font.SysFont('Consolas', int(20), )
@@ -71,7 +71,7 @@ planet_lst = ["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus"
 
 
 class Solarsystem:
-    def __init__(self, speed_multiplier):
+    def __init__(self):
         self.instances = []
         self.scale = 1
         self.speed_multiplier = 2.5
@@ -100,7 +100,7 @@ class Solarsystem:
             return True
         return False
 
-    def check_theme(self, combobox):
+    def check_theme(self):
         if self.theme == 0:
             self.overlay_colour = dark_grey_colours[1]
             self.txt_colour = dark_grey_colours[2]
@@ -277,9 +277,11 @@ class Body:
             if self.append_orbit:
                 if self.circleRect.x == (self.current_Rectx-self.prev_shiftx)+shift_x:
                     self.append_orbit = False
+                    print(self.name)
                 else:
                     self.current_Rectx = self.circleRect.x
                     self.prev_shiftx = shift_x
+                    self.append_orbit = True
 
 
 
@@ -300,8 +302,8 @@ class Body:
 
 
 
-        x_diff = round((self.startx*solar_system.scale) - (self.x*solar_system.scale), 4)
-        y_diff = round((self.starty*solar_system.scale) - (self.y*solar_system.scale), 4)
+        x_diff = round((self.startx*solar_system.scale) - (self.x*solar_system.scale), 3)
+        y_diff = round((self.starty*solar_system.scale) - (self.y*solar_system.scale), 3)
         # if self.name == 'Mercury':
         #     print([x_diff, y_diff])
         ticks = pygame.time.get_ticks()
@@ -314,16 +316,14 @@ class Body:
         if ticks >= 12000 and ticks <= 12500:
             solar_system.speed_multiplier = 1
         #
-        # if self.name == 'Venus':
+        # if self.name == 'Mercury':
         #     print(len(self.orbit))
 
 
         #
-        if x_diff <= 0.0001 and y_diff <= 0.0001 and y_diff >= -0.0001:
-            pass
-        if x_diff == 0.0000 and y_diff == 0.0000 and y_diff >= -0.0000:
+        if x_diff <= 0.001 and y_diff <= 0.001 and y_diff >= -0.001:
 
-            if ticks > 1700:
+            if ticks > 2500:
                 self.rotated = True
 
                 if not self.rotated_once:
@@ -347,7 +347,7 @@ def set_start_x(planet):
 
 def create_planets():
     global solar_system, sun
-    solar_system = Solarsystem(1)
+    solar_system = Solarsystem()
     sun = Body('Sun', 'yellow', 8, 20)  # sun position is centre of the screen
     sun.x = 0
     sun.y = 0
@@ -401,7 +401,7 @@ def get_planet_coords(century, boolean, move_x, move_y, movement, first_run, dra
 
             point = (planet.x, planet.y)
 
-
+            # print(solar_system.instances[7].rotated_once)
             if planet.append_orbit:
                 planet.orbit.append(point)
 
@@ -628,6 +628,7 @@ def main():
 
 
         if sim_running:
+            date_textbox.colour = solar_system.window_colour
 
             year, month, day = increment_date(year, month, day)
             date_textbox.setText(f'{year}-{month}-{day}')
@@ -710,7 +711,6 @@ def main():
                     elif instructions_btn.isOver(pos):
                         btn_clicked(instructions_btn, (planet_info_btn, settings_btn, physics_btn, graph_btn))
                     elif graph_btn.isOver(pos):
-                        print('asdsa')
                         btn_clicked(graph_btn, (planet_info_btn, settings_btn, physics_btn, instructions_btn))
                     elif dropdown.isOver(pos):
                         if show_menu: # close menu
@@ -831,7 +831,7 @@ def main():
                     submit_btn.button_clicked = False
                     date_textbox.colour = solar_system.window_colour
                     date_textbox.textColour = 'red'
-                    solar_system.check_theme(theme_comboBox)
+                    solar_system.check_theme()
                     fps = float(fps_textbox.getText())
 
                 theme_comboBox.draw(window)
