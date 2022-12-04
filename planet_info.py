@@ -2,8 +2,6 @@ instructions = '''
 
 
 
-
-
 CONTROLS WHEN USING MAIN SIM
 
 SPACE – PAUSE SIMULATION

@@ -7,12 +7,20 @@ import pandas as pd
 
 
 distance_graph = plt.figure()
-ax1 = distance_graph.add_subplot(1, 1, 1)
+distance_graph.add_subplot(1, 1, 1)
 plt.figure(figsize=(8, 5))
 
 x = []
 count = 0
 y = []
+
+
+
+def clear_plot():
+    plt.clf()
+    plt.cla()
+    print('asdadsdadsadasdasdsa')
+
 
 def distance_func(count):
     # xcoords = []
