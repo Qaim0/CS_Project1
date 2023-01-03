@@ -1,8 +1,10 @@
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-import random
-import time
-import pandas as pd
+
+
+
+
+
 
 
 
@@ -13,6 +15,7 @@ plt.figure(figsize=(8, 5))
 x = []
 count = 0
 y = []
+distances = []
 
 
 

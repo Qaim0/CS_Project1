@@ -1,5 +1,5 @@
-import pygame
-import math
+﻿import pygame
+
 
 # fonts = pygame.font.get_fonts()
 #     main window colour \ overlay colour / text colour
@@ -7,22 +7,19 @@ import math
 
 ####----------------------KNOWN BUGS-----------------###
 # Planets need x resetting after modifying physics
-
 from pygame.locals import *
 import pygame_widgets
 from planet_stats_dicts import *
 from planet_calculations import *
 from create_button import button
-from tools import create_widgets
+from tools import create_widgets, colour_dict
 import datetime
 from planet_info import solar_system_info, instructions, system_info
 from graphs import *
 dark_grey_colours = ['black',  (36, 36, 36), 'white']
 light_colours = ['grey', (30, 203, 225), 'black']
 dark_blue_colours = ['#05070f',  (12, 15, 26), 'white']
-font = pygame.font.SysFont('Consolas', int(20), )
-
-
+font = pygame.font.SysFont('Consolas', 20)
 
 pygame.init()
 
@@ -35,8 +32,6 @@ display_menu = False
 show_settings = False
 show_instructions = False
 show_graphs = False
-
-pages = [info_flag, display_menu, show_settings, show_instructions, show_graphs]
 
 #-----------IMAGES-------------
 
@@ -53,6 +48,7 @@ solarSystemImg = pygame.image.load('solar_system.jpg').convert_alpha()
 solarSystemImg = pygame.transform.scale(solarSystemImg, (400, 150))
 space_backgroundImg = pygame.transform.scale(pygame.image.load('space_background'), (1920, 1080))
 my_rectangle = pygame.image.load('rect1.png')
+mercury_icon = pygame.image.load('mercury.jpg')
 
 #---------GRAPHS-----
 
@@ -69,7 +65,8 @@ for x in range(len(imgs)):
 # RATES: a, e, i, mean longitude (L), longitude of perihelion, longitude of ascending node
 
 planet_lst = ["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"]
-
+setting_labels = ['Background colour', 'FPS', 'Graph figure colour', 'Graph line colour', 'Accent colour']
+graphTab_labels = ['GRAPH TYPE', 'PLANET 1', 'PLANET 2']
 
 class Solarsystem:
     def __init__(self):
@@ -78,13 +75,16 @@ class Solarsystem:
         self.speed_multiplier = 2.5
         self.default_vals = True
         self.theme = 0
-        self.overlay_colour = dark_grey_colours[1]
-        self.txt_colour = dark_grey_colours[2]
-        self.window_colour = dark_grey_colours[0]
+        self.overlay_colour = dark_blue_colours[1]
+        self.txt_colour = dark_blue_colours[2]
+        self.window_colour = dark_blue_colours[0]
         self.date_edited = False
         self.shiftx = 240
         self.shifty = 0
         self.drawline = True
+        self.orbit_ticks = 0 # sim ticks when reset / default button ticks pressed
+        self.sim_accent_colour = 'orange'
+        self.sim_running = True
 
 
 
@@ -96,10 +96,10 @@ class Solarsystem:
         self.scale*= round(scale_multiplier, 2)
 
     def zoom_out(self):
-        print(self.scale)
         if self.scale > 0.05:
             return True
         return False
+
     def zoom_in(self):
         if self.scale < 9:
             return True
@@ -119,6 +119,12 @@ class Solarsystem:
             self.overlay_colour = light_colours[1]
             self.txt_colour = light_colours[2]
             self.window_colour = light_colours[0]
+    def increase_speed(self):
+        if self.speed_multiplier < 12:
+            self.speed_multiplier += 0.15
+    def decrease_speed(self):
+        if self.speed_multiplier > 0.1:
+            self.speed_multiplier -= 0.15
 
 
 
@@ -134,6 +140,7 @@ class Body:
         self.x = 0
         self.y = 0
         self.orbit = []
+        self.orbit = []
         self.colour = colour
         self.mass = mass
         self.radius = radius
@@ -143,18 +150,21 @@ class Body:
         self.prev_shiftx = 0
         self.text = []
         self.enableTxt = False
+        self.enableDistance = False
         self.AU = 0
         self.radius_vector = 0
         self.full_rotation_points = []
         self.rotated_once = False
         self.default_vals = True
         self.append_orbit = True
+        self.same_pos = False # planet hasnt moved on screen (uranus and neptune)
 
     # ------Modifiable planet elements-----#
         self.eccentricity = 0
         self.orbit_incl = 0
         self.long_asc_node = 0
         self.long_perihelion = 0
+        self.true_anomaly = 0
 
     def get_planet_elements(self, planet, jul_centuries):
 
@@ -199,6 +209,8 @@ class Body:
             true_anomaly = 2 * (math.atan(anomaly_arg) / k + 180)  # atan = inverse tan
         else:
             true_anomaly = 2 * (math.atan(anomaly_arg) / k)
+        self.true_anomaly = true_anomaly
+
 
         self.radius_vector = self.AU * (1 - (self.eccentricity * (math.cos(to_radians(eccentric_anomaly)))))  # rGen
 
@@ -227,29 +239,21 @@ class Body:
     def display_planet_txt(self, y, move_y):
         label = []
         y_val = 20
+        if self.enableDistance:
+            blit_line(f'Distance from the sun: {round(self.radius_vector, 3)} AU', self.circleRect.topright[0] + 100, y + y_val + move_y, 'white')
+            return
         if self.enableTxt:
             for line in range(1, len(self.text)):
                 label.append(font.render(self.text[line], True, solar_system.txt_colour))
             for line in label:
                 window.blit(line, (self.circleRect.topright[0] + 100, y + y_val + move_y))
                 y_val += 20
-            blit_line(f'Distance from the sun: {round(self.radius_vector, 3)} AU', self.circleRect.topright[0] + 100, y + y_val + move_y, 20)
+            blit_line(f'Distance from the sun: {round(self.radius_vector, 3)} AU', self.circleRect.topright[0] + 100, y + y_val + move_y, 'white')
 
     def draw(self):  # radius scale
-        global line_endx
-        #
-
-
-
-
-
-        calculate_distance(solar_system.instances[0], solar_system.instances[5])
-
+        global line_endx, mercury_icon
         x = self.x * self.SCALE + WIDTH / 2
         y = -self.y * self.SCALE + HEIGHT / 2
-
-
-
 
         if len(self.orbit) > 2:
             updated_points = []
@@ -267,9 +271,6 @@ class Body:
                     orbit_y = -orbit_y * self.SCALE + HEIGHT / 2
                     updated_points.append((orbit_x + solar_system.shiftx, orbit_y + solar_system.shifty))
 
-
-
-
             if solar_system.drawline:
                 if self.rotated_once:
                     points = updated_points2
@@ -279,18 +280,20 @@ class Body:
 
 
         self.circleRect = pygame.draw.circle(window, self.colour, (x + solar_system.shiftx, y + solar_system.shifty), self.radius)
-        # if self.name == 'Uranus' or self.name == 'Neptune':
+        # if self.name == 'Uranus' or self.name == 'Neptune':]##
+
 
         if self.name == 'Saturn' or self.name == 'Jupiter' or self.name == 'Uranus' or self.name == 'Neptune':
-            if self.append_orbit:
-                if round(self.x, 2) == round((self.current_Rectx-self.prev_shiftx)+solar_system.shiftx, 2):
-                    self.append_orbit = False
-                else:
-                    self.current_Rectx = self.x
-                    self.prev_shiftx = solar_system.shiftx
-                    self.append_orbit = True
-            if self.name == 'Uranus':
-                print(self.x, self.current_Rectx-self.prev_shiftx+solar_system.shiftx)
+            if round(self.x, 2) == round((self.current_Rectx-self.prev_shiftx)+solar_system.shiftx, 2):
+                self.append_orbit = False
+                self.same_pos = True
+            else:
+                self.current_Rectx = self.x
+                self.prev_shiftx = solar_system.shiftx
+                self.append_orbit = True
+                self.same_pos = False
+            # if self.name == 'Uranus':
+            #     print(self.eccentricity)
             # if self.append_orbit:
             #     if self.circleRect.x == (self.current_Rectx-self.prev_shiftx)+solar_system.shiftx:
             #         self.append_orbit = False
@@ -314,7 +317,7 @@ class Body:
 
 
     def check_fully_rotated(self):
-        thresh = 0.01
+        thresh = 0.001
 
 
 
@@ -326,8 +329,18 @@ class Body:
         ticks = pygame.time.get_ticks()
 
 
+        # if self.name == 'Venus':
+        #     # print([x_diff, y_diff])
+        #     print(len(self.orbit))
+
+
+
+
+
         if ticks < 6000:
             solar_system.speed_multiplier = 2.7
+
+
 
 
         if ticks >= 12000 and ticks <= 12500:
@@ -338,11 +351,24 @@ class Body:
         #     thresh = 0.1
 
 
+
+
+
+
+
+
         if x_diff <= thresh and y_diff <= thresh:
-            if ticks > 2500:
-                if not self.rotated_once:
-                    self.rotated_once = True
-                    self.append_orbit = False
+            if self.name == 'Neptune' or self.name == 'Uranus':
+                if self.same_pos:
+                    return
+            # if x_diff == 0 and y_diff == 0:
+            #     return
+            #
+
+
+            if ticks > 2500 and (ticks-solar_system.orbit_ticks > 2000):
+                self.rotated_once = True
+                self.append_orbit = False
 
 
 def hex_to_rgb(value):
@@ -355,6 +381,7 @@ def hex_to_rgb(value):
 def set_start_pos(planet):
     planet.startx = planet.x
     planet.starty = planet.y
+    solar_system.orbit_ticks = pygame.time.get_ticks()
 
 
 
@@ -385,9 +412,9 @@ def create_planets():
 
 
 
-def get_planet_coords(century, movement, first_run):
+def get_planet_coords(century, first_run):
     solar_system.instances[0].draw()
-    if movement or solar_system.date_edited:
+    if solar_system.sim_running or solar_system.date_edited:
         mercury_x, mercury_y = solar_system.instances[1].get_planet_elements('Mercury', century)
         venus_x, venus_y = solar_system.instances[2].get_planet_elements('Venus', century)
         earth_x, earth_y = solar_system.instances[3].get_planet_elements('Earth', century)
@@ -422,6 +449,8 @@ def get_planet_coords(century, movement, first_run):
             else:
                 planet.append_orbit = False
 
+            # print(solar_system.instances[4].rotated_once)
+
 
 
 
@@ -433,30 +462,37 @@ def get_planet_coords(century, movement, first_run):
 def render_multi_line(text, x, y, fsize, font=pygame.font.SysFont('Consolas', 15)):
     lines = text.splitlines()
     for i, l in enumerate(lines):
-        window.blit(font.render(l, 1, 'white'), (x, ((y + fsize * i)) + i))
+        window.blit(font.render(l,  True, 'white'), (x, ((y + fsize * i)) + i))
         y += 10
 
 def show_planet_info():
     for i in range(len(solar_system.instances)):
         if solar_system.instances[i].clicked_on:
-            blit_text(window, solar_system_info[i], (1395, 350), solar_system.txt_colour)
+            blit_text(window, solar_system_info[i], (1360, 350), solar_system.txt_colour)
             # render_multi_line(solar_system_info[i], 1385, 350, 2)
-            window.blit(imgs[i], (1470, 150))
+            window.blit(imgs[i], (1470, 170))
 
             return
-    blit_text(window, system_info, (1370, 350), solar_system.txt_colour)
+    blit_text(window, system_info, (1360, 350), solar_system.txt_colour)
     window.blit(solarSystemImg, (1450, 200))
 
 
-def blit_line(text, x, y, size):
-    font = pygame.font.SysFont('Consolas', size)
-    line = font.render(text, True, solar_system.txt_colour)
+def blit_line(text, x, y, colour):
+    line = font.render(text, True, colour)
     window.blit(line, (x, y))
 
 
 def calculate_distance(planet1, planet2):
     distance = (((planet2.x-planet1.x)**2) + (planet2.y-planet1.y)**2)**0.5
     return round(distance, 2)
+#
+def calculate_velocity(planet):
+    _GRAVITATIONAL_CONSTANT = 6.67384E-11
+
+    result = ((_GRAVITATIONAL_CONSTANT * (planet.mass * (10**24))) / planet.radius_vector*100)**0.5
+
+
+    return result
 
 
 
@@ -468,7 +504,7 @@ def show_controls():
                       "C: Centre screen"]
 
     for i in left_side_tips:
-        blit_line(i, 20, left_labels_y, 20)
+        blit_line(i, 20, left_labels_y, 'white')
         left_labels_y += 30
 
 
@@ -476,6 +512,8 @@ def show_controls():
 def set_default_elements(combo, sliders):
 
     planet = solar_system.instances[combo.selected+1]
+
+
 
     if planet.default_vals:
         sliders[0].setValue(planet.AU)
@@ -501,7 +539,7 @@ def set_default_elements(combo, sliders):
 
 
 
-def blit_text(surface, text, pos, color, font=pygame.font.SysFont('Consolas', 15)):
+def blit_text(surface, text, pos, color, font=pygame.font.SysFont('Consolas', 15, bold=True)):
     words = [word.split(' ') for word in text.splitlines()]  # 2D array where each row is a list of words.
     space = font.size(' ')[0]
 
@@ -527,9 +565,17 @@ def btn_clicked(selected_btn, buttons):
             btn.bd_colour = btn.original_colour
             return True
 
+def check_which_orbit():
+    for planet in solar_system.instances:
+        if not planet.rotated_once:
+            if not planet.name in ['Sun', 'Uranus', 'Neptune', 'Saturn', 'Jupiter']:
+                print('---------------------------')
+                print(planet.name)
 
 def draw_rect_alpha(surface, color, shape_surf, rect):
     pygame.draw.rect(shape_surf, color, shape_surf.get_rect(), 0, 32)
+
+    pygame.draw.rect(shape_surf, solar_system.sim_accent_colour, shape_surf.get_rect(), 2, 32)
     surface.blit(shape_surf, rect)
 
 
@@ -543,9 +589,11 @@ def main():
 
 
 
-    sim_running = True
+
+
+
     first_run = True
-    show_menu = False
+    show_menu = True
 
 
 
@@ -557,6 +605,10 @@ def main():
     rightrect = (leftwidth, 0, leftwidth, height)
 
     right_surf = pygame.Surface(pygame.Rect(rightrect).size, pygame.SRCALPHA)
+    print(right_surf.get_width())
+
+    paused_text_x = 850
+
 
 
 
@@ -571,15 +623,18 @@ def main():
 
     planet_info_btn = button(1450, 70, 90, 22, 'INFO')
     physics_btn = button(1700, 70, 130, 22, 'ADJUST PHYSICS')
-    settings_btn = button(1600, 1050, 90, 22, 'SETTINGS')
+    settings_btn = button(1650, 110, 90, 22, 'SETTINGS')
     instructions_btn = button(1560, 70, 120, 22, 'INSTRUCTIONS')
-    submit_btn = button(1750, 900, 120, 22, 'SUBMIT')
-    default_vals_btn = button(1750, 1000, 120, 22, 'DEFAULT VALS')
-    custom_vals_btn = button(1750, 800, 120, 22, 'CUSTOM VALS')
-    reset_all_vals = button(1750, 950, 120, 22, 'RESET VALS')
-    graph_btn = button(1560, 110, 120, 22, 'GRAPHS')
+    submit_btn = button(1520, 1000, 250, 22, 'SUBMIT')
+    default_vals_btn = button(1420, 800, 120, 22, 'DEFAULT VALS')
+    custom_vals_btn = button(1720, 800, 120, 22, 'CUSTOM VALS')
+    reset_all_vals = button(1570, 800, 120, 22, 'RESET VALS')
+    graph_btn = button(1500, 110, 120, 22, 'GRAPHS')
 
     dropdown = button(1910, 540, 3, 120, '')
+
+    buttons = [planet_info_btn, physics_btn, settings_btn, instructions_btn, submit_btn, default_vals_btn, custom_vals_btn
+               , reset_all_vals, graph_btn, dropdown]
 
 
 
@@ -600,8 +655,8 @@ def main():
 
     fps = 120
 
-    date_textbox, sliders, physics_combo_box, theme_comboBox, side_labels, val_outputs, fps_textbox, graph_optionbox, planet1_optionbox, planet2_optionbox = create_widgets(window, solar_system)
-
+    date_textbox, sliders, physics_combo_box, theme_comboBox, side_labels, val_outputs, fps_textbox, graph_optionbox, planet1_optionbox, planet2_optionbox, graph_optionbox1, graph_optionbox2, accents_optionbox = create_widgets(window, solar_system)
+# graph optionbox1 : background figure colour, graph optionbox 2 graph line colour
     fps_textbox.setText(text=str(fps))
     clock = pygame.time.Clock()
     element_labels_y = 310
@@ -620,25 +675,27 @@ def main():
 
 
         jul_century = ((gregorian_to_julian(year, month, day) - julian_epoch) / jul_century_in_jul_days)
-        get_planet_coords(jul_century, sim_running, first_run)
+        get_planet_coords(jul_century, first_run)
 
         show_controls()
 
+        if solar_system.date_edited:
+            for planet in solar_system.instances:
+                set_start_pos(planet)
+                planet.rotated_once = False
 
-        if sim_running:
+
+        if solar_system.sim_running:
+            solar_system.date_edited = False
             date_textbox.colour = solar_system.window_colour
             year, month, day = increment_date(year, month, day)
-            date_textbox.setText(f'{year}-{month}-{day}')
+            date_textbox.setText(f'{year}-{month}-{round(day)}')
 
             day += 0.4 * round(solar_system.speed_multiplier, 2)
             day = round(day, 2)
 
-            if solar_system.date_edited:
-                for planet in solar_system.instances:
-                    set_start_pos(planet)
-                    planet.rotated_once = False
         else:
-            blit_line('SIMULATION PAUSED', 600, 1020, 30)
+            blit_line('SIMULATION PAUSED', paused_text_x, 1020, solar_system.sim_accent_colour)
 
             if date_textbox.selected:
                 solar_system.date_edited = True
@@ -659,7 +716,7 @@ def main():
 
                     datetime.datetime(year=new_year, month=new_month, day=new_day)
                 except:
-                    blit_line('Date has to be in format yyyy-m-d', 190, 20, 10)
+                    blit_line('Date has to be in format yyyy-m-d', 190, 20, solar_system.sim_accent_colour)
 
 
 
@@ -679,7 +736,8 @@ def main():
                     for planet in solar_system.instances:
                         planet.orbit = []
                         planet.rotated_once = False
-                        planet.startx = planet.x
+
+
 
 
             else:
@@ -702,6 +760,8 @@ def main():
                 if event.button == 5:  # scroll down: zoom out
                     if solar_system.zoom_out():
                         Body.SCALE *= 0.75
+                        # mercury_icon = pygame.transform.scale(mercury_icon, (mercury_icon.get_width() * 0.75, mercury_icon.get_height() * 0.75))
+
                         solar_system.update_scale(0.75)
 
                 elif event.button == 1:  # left mouse button pressed
@@ -724,20 +784,26 @@ def main():
                         if show_menu: # close menu
                             dropdown.x = 1910
                             show_menu = False
+                            paused_text_x = 850
                         else:
                             dropdown.x = 1340
                             show_menu = True
+                            paused_text_x = leftwidth / 2
 
 
 
-                    if custom_vals_btn.isOver(pos):
+                    if custom_vals_btn.isOver(pos) and physics_btn.button_clicked: # so if press 'white' on bottom settings
+                        # doesn't interfere with custom vals button which is on the same position
                         planet = solar_system.instances[physics_combo_box.selected+1]
 
                         btn_clicked(custom_vals_btn, (default_vals_btn, reset_all_vals))
                         planet.default_vals = False
-                        planet.rotated_once = False
+                        solar_system.instances[physics_combo_box.selected+1].rotated_once = False
                         planet.orbit = []
                         set_start_pos(planet)
+
+
+                        custom_vals_btn.button_clicked = False
 
 
                     elif default_vals_btn.isOver(pos):
@@ -747,6 +813,9 @@ def main():
                         planet.default_vals = True
                         set_start_pos(planet)
                         planet.rotated_once = False
+                        solar_system.instances[physics_combo_box.selected+1].rotated_once = False
+                        default_vals_btn.button_clicked = False
+
 
 
 
@@ -757,6 +826,8 @@ def main():
                             planet.orbit = []
                             set_start_pos(planet)
                             planet.default_vals = True
+                        reset_all_vals.button_clicked = False
+
 
 
                     if submit_btn.isOver(pos):
@@ -782,9 +853,13 @@ def main():
                 elif event.button == 3:
                     for planet in solar_system.instances:
                         if planet.circleRect.collidepoint(pygame.mouse.get_pos()):
-                            if not planet.enableTxt:
+                            if not planet.enableTxt: # show no info
                                 planet.enableTxt = True
                             else:
+                                if planet.enableDistance:
+                                    planet.enableDistance = False
+                                else:
+                                    planet.enableDistance = True
                                 planet.enableTxt = False
                 elif event.button == 4:  # scroll up
                     if solar_system.zoom_in():
@@ -798,16 +873,15 @@ def main():
                     else:
                         solar_system.drawline = True
                 elif event.key == pygame.K_SPACE:
-                    if sim_running:
-                        sim_running = False
+                    if solar_system.sim_running:
+                        solar_system.sim_running = False
                     else:
-                        sim_running = True
-
+                        solar_system.sim_running = True
 
                 elif event.key == pygame.K_a:
-                    solar_system.speed_multiplier -= 0.15
+                    solar_system.decrease_speed()
                 elif event.key == pygame.K_d:
-                    solar_system.speed_multiplier += 0.15
+                    solar_system.increase_speed()
                 elif event.key == pygame.K_c:
                     if show_menu:
                         solar_system.shiftx, solar_system.shifty = -sun.x * sun.SCALE, -sun.y * sun.SCALE
@@ -833,19 +907,26 @@ def main():
 
 
 
+
         physics_combo_box.update(events)
         theme_comboBox.update(events)
         pygame_widgets.update(events)
         graph_optionbox.update(events)
         planet1_optionbox.update(events)
         planet2_optionbox.update(events)
+        graph_optionbox1.update(events)
+        graph_optionbox2.update(events)
+        accents_optionbox.update(events)
+
 
 
 
         if show_menu:
-            blit_line('MyOrbitSimulator', 1550, 30, 20)
 
             draw_rect_alpha(window, rgb, right_surf, rightrect)
+
+            blit_line('MyOrbitSimulator', 1550, 30, 'white')
+
             planet_info_btn.redraw(window)
             physics_btn.redraw(window)
             settings_btn.redraw(window)
@@ -856,20 +937,46 @@ def main():
                 show_planet_info()
 
             elif settings_btn.button_clicked:
+                blit_line('SETTINGS', 1570, 200, solar_system.sim_accent_colour)
+                side_labels_y = 320
                 fps_textbox.draw()
+                accents_optionbox.draw(window)
+
+                graph_optionbox2.draw(window)
+
+                graph_optionbox1.draw(window)
 
                 fps_textbox.show()
                 submit_btn.draw(window)
 
+
+                for label in setting_labels:
+                    blit_line(label, 1400, side_labels_y, 'white')
+                    side_labels_y += 100
+
                 if submit_btn.button_clicked:
+                    accent_colour = accents_optionbox.option_list[accents_optionbox.selected]
                     solar_system.theme = theme_comboBox.selected
                     submit_btn.button_clicked = False
                     date_textbox.colour = solar_system.window_colour
-                    date_textbox.textColour = 'red'
+                    date_textbox.textColour = accent_colour
+
+                    for btn in buttons:
+                        btn.given_bd_colour = accent_colour
+                    solar_system.sim_accent_colour = accent_colour
+
                     solar_system.check_theme()
                     fps = float(fps_textbox.getText())
 
+                    for optionbox in [physics_combo_box, graph_optionbox, planet1_optionbox, planet2_optionbox,
+                                      graph_optionbox1,
+                                      graph_optionbox2, accents_optionbox, theme_comboBox]:
+                        optionbox.highlight_color = solar_system.sim_accent_colour
+                        optionbox.txt_colour = solar_system.txt_colour
+                        optionbox.color = solar_system.overlay_colour
+
                 theme_comboBox.draw(window)
+
 
 
             if not settings_btn.button_clicked:
@@ -877,41 +984,69 @@ def main():
 
 
             if physics_btn.button_clicked:
+                pass
                 for i in range(len(sliders)):
+                    sliders[i].handleColour = colour_dict[solar_system.sim_accent_colour]
                     sliders[i].draw()
                     sliders[i].show()
                     val_outputs[i].draw()
                     val_outputs[i].show()
                     val_outputs[i].setText(round(sliders[i].getValue(), 9))
-                    blit_line(side_labels[i], 1370, element_labels_y, 20)
+
+                for i in range(3):
+                    blit_line(side_labels[i], 1370, element_labels_y, 'white')
                     element_labels_y += 100
-
-                blit_line('ADJUST PHYSICS', 1500, 230, 30)
-
-
+                element_labels_y = 310
+                #
+                #
+                blit_line('ADJUST PHYSICS', 1500, 200, solar_system.sim_accent_colour)
+                #
+                #
                 set_default_elements(physics_combo_box, sliders)
+
+
+
+
+                if solar_system.instances[physics_combo_box.selected+1].default_vals:
+                    default_vals_btn.highlight_btn = True
+                    custom_vals_btn.highlight_btn = False
+                else:
+                    default_vals_btn.highlight_btn = False
+                    custom_vals_btn.highlight_btn = True
+
+
 
                 default_vals_btn.redraw(window)
                 custom_vals_btn.redraw(window)
                 physics_combo_box.draw(window)
-                reset_all_vals.draw(window)
+                reset_all_vals.redraw(window)
 
             elif not physics_btn.button_clicked:
                 for i in range(len(sliders)):
                     sliders[i].hide()
                     val_outputs[i].hide()
                 if instructions_btn.button_clicked:
-                    blit_text(window, instructions, (1400, 150), solar_system.txt_colour)
-                    blit_line('INSTRUCTIONS', 1550, 160, 30)
+                    blit_text(window, instructions, (1400, 190), solar_system.txt_colour)
+                    blit_line('INSTRUCTIONS', 1520, 200, solar_system.sim_accent_colour)
+
             if graph_btn.button_clicked:
-                planet1_optionbox.draw(window)
+                blit_line('GRAPHS', 1600, 200, solar_system.sim_accent_colour)
+                graph_labels_y = 320
                 planet2_optionbox.draw(window)
+
+                planet1_optionbox.draw(window)
                 graph_optionbox.draw(window)
-                blit_line('GRAPH TYPE', 1560, 250, 30)
+
+
+
+
+                for i in range(3):
+                    blit_line(graphTab_labels[i], 1400, graph_labels_y, 'white')
+                    graph_labels_y += 100
                 submit_btn.redraw(window)
 
                 if submit_btn.button_clicked:
-                    if sim_running:
+                    if solar_system.sim_running:
                         c += 1
                         if c > 20:
                             if graph_optionbox.selected == 0:
@@ -924,7 +1059,12 @@ def main():
                                 count = distance_func(count)
                                 distance_gr = pygame.image.load('distance_graph.png').convert_alpha()
                                 c=0
-                    window.blit(distance_gr, (1450,500))
+                            elif graph_optionbox.selected == 0:
+                                pass
+                        # true anomaly
+
+                    window.blit(distance_gr, (1450,600))
+
 
 
         else:

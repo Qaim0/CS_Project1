@@ -2,55 +2,45 @@ instructions = '''
 
 
 
-CONTROLS WHEN USING MAIN SIM
+---------------- CONTROLS WHEN USING MAIN SIM ---------------
 
-SPACE – PAUSE SIMULATION
+Space - pause simulation
 
-D - INCREASE SIMULATION SPEED
+D - increase simulation speed
 
-A – DECREASE SIMULATION SPEED
+A – decrease simulation speed
 
-S – TOGGLE ORBIT LINES
+S – toggle orbit lines
 
-C- CENTRE SCREEN
+C- centre screen
 
-ARROW KEYS- MOVE SCREEN
+Arrow keys- move screen
 
-MOUSE RIGHT-CLICK- TOGGLE PLANET INFO
+Mouse right-click- toggle planet info
 
-MOUSE LEFT-CLICK- SELECT PLANET / WIDGET
+Mouse left-click- select planet / widget
 
-MOUSE SCROLL DOWN / UP - ZOOM OUT / ZOOM IN
+Mouse scroll down / up - zoom out / zoom in
 
----------------GUIDANCE ON PHYSICS MANIPULATION--------------
-
-
-
-PLANETS FROM MERCURY TO JUPITER CAN BE MANIPULATED, OTHER PLANETS REQUIRE MORE COMPLEX CALCULATIONS AND ADAPTATIONS
-
-SEMI-MAJOR AXIS- DEFINES THE SIZE OF THE ORBIT
-
-ECCENTRICITY- DEFINES THE SHAPE OF THE ORBIT
-
-ORBIT INCLINATION- ANGLE AT WHICH THE ORBITAL PLANE OF AN ENTITY IS TILTED RELATIVE TO ECLIPTIC PLANE
-
-AU- ASTRONOMICAL UNIT. THE MEAN DISTANCE FROM THE CENTRE OF THE EARTH TO THE CENTER OF THE SUN
+--------------- Guidance on physics manipulation --------------
 
 
 
+Planets from mercury to jupiter can be manipulated, other planets require more complex calculations and adaptations
 
+Semi-major axis - defines the size of the orbit
 
+Eccentricity - defines the shape of the orbit
 
+Orbit inclination - angle at which the orbital plane of an entity is tilted relative to ecliptic plane
 
+AU- astronomical unit. The mean distance from the centre of the earth to the center of the sun
 
+Ascending longitude - fixes the orbital plane in space
 
+Perihelion longitude - defines orientation of the orbit
 
-
-
-ASCENDING LONGITIDE- FIXES THE ORBITAL PLANE IN SPACE
-PERIHELION LONGITUDE- DEFINES ORIENTATION OF THE ORBIT
-
-EXPERIMENTING WITH THESE ELEMENTS AND WITNESSING THE EFFECTS WILL HELP IN UNDERSTANDING. GOOD LUCK AND HAVE FUN!
+Experimenting with these elements and witnessing the resultant effects will help in understanding them. Good luck and have fun!
 '''
 sun_info = '''
                            SUN

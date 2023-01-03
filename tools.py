@@ -9,6 +9,16 @@ COLOR_ACTIVE = pygame.Color('dodgerblue2')
 FONT = pygame.font.Font(None, 32)
 
 
+colour_dict = {
+    'red': (255, 0, 0),
+    'yellow': (255, 255, 0),
+    'blue': (0, 0, 255),
+    'orange': (233, 219, 88)
+}
+
+
+
+
 
 
 
@@ -18,9 +28,6 @@ FONT = pygame.font.Font(None, 32)
 # long - asc node : between 4.8 and 360.0
 # long - perihelion : between 4.8 and 360.0
 # eccentric anomaly :
-
-adjustables = ['Eccentricity', 'Orbit Inclination', 'Longitude of Ascending node',
-               'Longitude of Perihelion', 'Eccentric Anomaly']
 
 
 
@@ -40,23 +47,24 @@ class OptionBox():
         self.active_option = -1
         self.y = y
         self.clicked_on_option = False
+        self.txt_colour = 'white'
 
     def draw(self, surf):
-        pygame.draw.rect(surf, self.highlight_color if self.menu_active else self.color, self.rect, 0, 19)
-        pygame.draw.rect(surf, (0, 0, 0), self.rect, 1, 19)
-        msg = self.font.render(self.option_list[self.selected], 1, (0, 0, 0))
+        pygame.draw.rect(surf, (0, 0, 0), self.rect, 2, 19)
+        pygame.draw.rect(surf, self.highlight_color if self.menu_active else self.color, self.rect, 1, 19)
+        msg = self.font.render(self.option_list[self.selected], 1, 'white')
         surf.blit(msg, msg.get_rect(center=self.rect.center))
 
         if self.draw_menu:
             for i, text in enumerate(self.option_list):
                 rect = self.rect.copy()
                 rect.y += (i + 1) * self.rect.height
-                pygame.draw.rect(surf, self.highlight_color if i == self.active_option else self.color, rect)
-                msg = self.font.render(text, 1, (0, 0, 0))
+                pygame.draw.rect(surf, self.highlight_color if i == self.active_option else self.color, rect, 0)
+                msg = self.font.render(text, 1, (self.txt_colour))
                 surf.blit(msg, msg.get_rect(center=rect.center))
             outer_rect = (
             self.rect.x, self.rect.y + self.rect.height, self.rect.width, self.rect.height * len(self.option_list))
-            pygame.draw.rect(surf, (0, 0, 0), outer_rect, 2)
+            # pygame.draw.rect(surf, (0, 0, 0), outer_rect, 2)
 
     def update(self, event_list):
         mpos = pygame.mouse.get_pos()
@@ -79,10 +87,9 @@ class OptionBox():
                 if self.menu_active: # if optionbox clicked on
                     self.draw_menu = not self.draw_menu
                     self.clicked_on_option = False
-                    print('ee')
+                    # print('ee')
 
                 elif self.draw_menu and self.active_option >= 0: # if optionbox option clicked on
-                    print('aaaaaaaaaaaaaaaaaaaaaaaaa')
                     self.selected = self.active_option
                     self.draw_menu = False
                     self.clicked_on_option = True
@@ -96,33 +103,39 @@ def create_widgets(win, solar_system):
 
 
     planets = OptionBox(
-        1750, 300, 160, 40, (150, 150, 150), 'orange', pygame.font.SysFont(None, 30),
+        1750, 300, 160, 40, solar_system.overlay_colour, 'orange', pygame.font.SysFont(None, 30),
         ["Mercury", "Venus", "Earth", "Mars", "Jupiter"])
     themes = OptionBox(
-        1700, 300, 160, 40, (150, 150, 150), 'orange', pygame.font.SysFont(None, 30),
+        1750, 300, 160, 40, solar_system.overlay_colour, 'orange', pygame.font.SysFont(None, 30),
         ["Dark Standard", "Dark blue", "light"])
+    themes.selected = 1 # set to dark blue
+
+    graph_background = OptionBox(1750, 500, 150, 45, solar_system.overlay_colour, 'orange', pygame.font.SysFont(None, 30), ['Grey', 'blue', 'white'])
+    graph_line = OptionBox(1750, 600, 150, 45, solar_system.overlay_colour, 'orange', pygame.font.SysFont(None, 30), ['red', 'blue', 'green'])
+    accent_colours = OptionBox(1750, 700, 150, 45, solar_system.overlay_colour, 'orange', pygame.font.SysFont(None, 30), ['red', 'yellow', 'blue', 'orange'])
+
+    slider1 = Slider(win, 1620, 410, 150, 10, min=0.02, max=5, step=0.01)  # for semi major axis
+    slider2 = Slider(win, 1620, 510, 150, 10, min=0.00000001, max=0.989, step=0.001)  # for eccentricity
 
 
-    slider1 = Slider(win, 1650, 410, 150, 10, min=0.02, max=5, step=0.01)  # for semi major axis
-    slider2 = Slider(win, 1650, 510, 150, 10, min=0.00000001, max=0.989, step=0.001)  # for eccentricity
+    output1 = TextBox(win, 1800, 400, 85, 30, fontSize=20, borderThickness=0)
+    output2 = TextBox(win, 1800, 500, 85, 30, fontSize=20, borderThickness=0)
+
+    fps_box = TextBox(win, 1750, 400, 150, 45, textColour=solar_system.txt_colour, fontSize=25, colour=(solar_system.overlay_colour), borderThickness=2, font=pygame.font.SysFont('Consolas', int(20)))
+    date_textbox = TextBox(win, 10, 0, 170, 45, textColour=solar_system.sim_accent_colour, fontSize=25, borderThickness=0, font=pygame.font.SysFont('Consolas', int(20)))
 
 
-    output1 = TextBox(win, 1820, 400, 85, 30, fontSize=20, borderThickness=0)
-    output2 = TextBox(win, 1820, 500, 85, 30, fontSize=20, borderThickness=0)
-
-    fps_box = TextBox(win, 1750, 400, 150, 45, textColour='black', fontSize=25, colour='grey', borderThickness=0, font=pygame.font.SysFont('Consolas', int(20)))
-    date_textbox = TextBox(win, 10, 0, 170, 45, textColour=solar_system.txt_colour, fontSize=25, borderThickness=0, font=pygame.font.SysFont('Consolas', int(20)))
 
 
 
     # graph optionboxes
 
 
-    graph_type = OptionBox(1560, 300, 160, 40, (150, 150, 150), 'orange', pygame.font.SysFont(None, 30),
+    graph_type = OptionBox(1750, 300, 160, 40, solar_system.overlay_colour, 'orange', pygame.font.SysFont(None, 30),
         ["Distance", "Venus", "Earth", "Mars", "Jupiter"])
-    planet1 = OptionBox(1450, 400, 160, 40, (150, 150, 150), 'orange', pygame.font.SysFont(None, 30),
+    planet1 = OptionBox(1750, 400, 160, 40, solar_system.overlay_colour, 'orange', pygame.font.SysFont(None, 30),
         ["Sun", "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"])
-    planet2 = OptionBox(1650, 400, 160, 40, (150, 150, 150), 'orange', pygame.font.SysFont(None, 30),
+    planet2 = OptionBox(1750, 500, 160, 40, solar_system.overlay_colour, 'orange', pygame.font.SysFont(None, 30),
         ["Sun", "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"])
 
 
@@ -131,6 +144,6 @@ def create_widgets(win, solar_system):
     sliders = [slider1, slider2]
 
 
-    return date_textbox, sliders, planets, themes, lables, outputs, fps_box, graph_type, planet1, planet2
+    return date_textbox, sliders, planets, themes, lables, outputs, fps_box, graph_type, planet1, planet2, graph_background, graph_line, accent_colours
     # lists = comboboxes
 

@@ -12,12 +12,13 @@ class button():
         self.height = height
         self.text = text
         self.button_clicked = False
+        self.given_bd_colour = 'orange'
         self.bd_colour = 'orange'
         self.highlight_btn = False
     def highlight_button(self):
         self.highlight_btn = True
 
-    def draw(self, win, outline=True):
+    def draw(self, win, outline=True, font = pygame.font.SysFont('Gotham', 20, 'bold')):
         # Call this method to draw the button on the screen
         if outline:
             pygame.draw.rect(win, self.bd_colour, (self.x - 2, self.y - 2, self.width + 4, self.height + 4), 0, 4)
@@ -25,24 +26,19 @@ class button():
         self.buttonRect = pygame.draw.rect(win, self.colour, (self.x, self.y, self.width, self.height))
 
         if self.buttonRect.collidepoint(pygame.mouse.get_pos()) or self.button_clicked:
-            self.bd_colour = 'orange'
-
-
+            self.bd_colour = self.given_bd_colour
         else:
             self.bd_colour = 'grey'
 
 
+        if self.buttonRect.collidepoint(pygame.mouse.get_pos()) or self.button_clicked or self.highlight_btn:
+            self.bd_colour = self.given_bd_colour
+        else:
+            self.bd_colour = 'grey'
 
-        if self.text != '':
-            if self.buttonRect.collidepoint(pygame.mouse.get_pos()) or self.button_clicked or self.highlight_btn:
-                self.bd_colour = 'orange'
-            else:
-                self.bd_colour = 'grey'
 
-            font = pygame.font.SysFont('Gotham', 20, 'bold')
-            text = font.render(self.text, 1, self.bd_colour)
-            win.blit(text, (
-            self.x + (self.width / 2 - text.get_width() / 2), self.y + (self.height / 2 - text.get_height() / 2)))
+        text = font.render(self.text, True, self.bd_colour)
+        win.blit(text, (self.x + (self.width / 2 - text.get_width() / 2), self.y + (self.height / 2 - text.get_height() / 2)))
 
 
     def isOver(self, pos):
