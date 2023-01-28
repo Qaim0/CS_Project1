@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2023-01-28T14:40:38.339Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.69" etag="9pMJxnDNCfbGVO3Tudc3" version="20.8.13" type="github">
+<mxfile host="app.diagrams.net" modified="2023-01-28T17:44:28.463Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.69" etag="iToM81tUixBxXL5yZqfx" version="20.8.13" type="github">
   <diagram id="x9v0K1_A4wv2pBw7AY4e" name="Page-1">
-    <mxGraphModel dx="1618" dy="744" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" background="none" math="0" shadow="0">
+    <mxGraphModel dx="1365" dy="744" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" background="none" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -632,7 +632,25 @@
           <mxGeometry x="1100" y="1780" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="k0LOo1t_vnFc-5xUoJc_-35" value="User has no access error" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="1290" y="1780" width="120" height="60" as="geometry" />
+          <mxGeometry x="1300" y="1780" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="k0LOo1t_vnFc-5xUoJc_-41" value="&lt;font color=&quot;#ff5745&quot; style=&quot;font-size: 17px;&quot;&gt;Button Name&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBorderColor=none;strokeColor=#FF3859;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="2260" width="160" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="k0LOo1t_vnFc-5xUoJc_-42" value="&lt;font color=&quot;#050201&quot; style=&quot;font-size: 17px;&quot;&gt;Dropdown Name&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBorderColor=none;strokeColor=#030101;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="2390" width="160" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="k0LOo1t_vnFc-5xUoJc_-43" value="Option1&amp;nbsp;" style="rounded=0;whiteSpace=wrap;html=1;labelBorderColor=none;strokeColor=#030101;fontSize=17;fontColor=#050201;" vertex="1" parent="1">
+          <mxGeometry x="1170" y="2480" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="k0LOo1t_vnFc-5xUoJc_-45" value="Option 3" style="rounded=0;whiteSpace=wrap;html=1;labelBorderColor=none;strokeColor=#030101;fontSize=17;fontColor=#050201;" vertex="1" parent="1">
+          <mxGeometry x="1170" y="2600" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="k0LOo1t_vnFc-5xUoJc_-44" value="&lt;font color=&quot;#f26130&quot;&gt;Option 2&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;labelBorderColor=none;strokeColor=#F55252;fontSize=17;fontColor=#050201;" vertex="1" parent="1">
+          <mxGeometry x="1170" y="2540" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="k0LOo1t_vnFc-5xUoJc_-46" value="Option 4" style="rounded=0;whiteSpace=wrap;html=1;labelBorderColor=none;strokeColor=#030101;fontSize=17;fontColor=#050201;" vertex="1" parent="1">
+          <mxGeometry x="1170" y="2660" width="140" height="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
