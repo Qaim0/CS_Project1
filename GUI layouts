@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-02-08T13:37:48.113Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.78" etag="f22rqvZGLoFaNxdNQown" version="20.8.15" type="github">
+<mxfile host="app.diagrams.net" modified="2023-02-08T13:40:14.923Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.78" etag="4Mgyz8LcNFYudmxa3YsT" version="20.8.15" type="github">
   <diagram name="Page-1" id="vIo-cjT-3ZrsAAdECMPL">
     <mxGraphModel dx="877" dy="820" grid="1" gridSize="13" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -558,8 +558,8 @@
         <mxCell id="AvA47sECAiGhe_OXTNNx-235" value="Select Planet" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=17;" parent="1" vertex="1">
           <mxGeometry x="556" y="5040" width="103.5" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="AvA47sECAiGhe_OXTNNx-236" value="Semi-Major axis" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=17;" parent="1" vertex="1">
-          <mxGeometry x="556" y="5075" width="124" height="30" as="geometry" />
+        <mxCell id="AvA47sECAiGhe_OXTNNx-236" value="Semi-Major Axis" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=17;" parent="1" vertex="1">
+          <mxGeometry x="551" y="5075" width="133" height="30" as="geometry" />
         </mxCell>
         <mxCell id="AvA47sECAiGhe_OXTNNx-237" value="Eccentricity" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=17;" parent="1" vertex="1">
           <mxGeometry x="550" y="5117.5" width="103.5" height="30" as="geometry" />
@@ -610,10 +610,10 @@
           <mxGeometry x="1240" y="5130" width="72" height="25" as="geometry" />
         </mxCell>
         <mxCell id="AvA47sECAiGhe_OXTNNx-305" value="Graph type" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=17;" parent="1" vertex="1">
-          <mxGeometry x="986.25" y="5050" width="103.5" height="30" as="geometry" />
+          <mxGeometry x="979.5" y="5050" width="103.5" height="30" as="geometry" />
         </mxCell>
         <mxCell id="AvA47sECAiGhe_OXTNNx-306" value="Planet 1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=17;" parent="1" vertex="1">
-          <mxGeometry x="971" y="5087.5" width="124" height="30" as="geometry" />
+          <mxGeometry x="962" y="5087.5" width="124" height="30" as="geometry" />
         </mxCell>
         <mxCell id="AvA47sECAiGhe_OXTNNx-307" value="Planet 2 (optional)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=17;" parent="1" vertex="1">
           <mxGeometry x="986.25" y="5127.5" width="148.5" height="30" as="geometry" />
