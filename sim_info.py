@@ -32,15 +32,12 @@ Semi-major axis - defines the size of the orbit
 
 Eccentricity - defines the shape of the orbit
 
-Orbit inclination - angle at which the orbital plane of an entity is tilted relative to ecliptic plane
 
 AU- astronomical unit. The mean distance from the centre of the earth to the center of the sun
 
-Ascending longitude - fixes the orbital plane in space
+True Anomaly - Angle of the planets orbit from the sun, starting from the point of perihelion (point closest to the sun)
 
-Perihelion longitude - defines orientation of the orbit
-
-Experimenting with these elements and witnessing the resultant effects will help in understanding them. Good luck and have fun!
+Experimenting with these elements and observing their effects will help in understanding them. Good luck and have fun!
 '''
 sun_info = '''
                            SUN
@@ -262,4 +259,83 @@ At the centre, gravity pulled more and more material in. Eventually, the pressur
 Matter farther out in the disk was also clumping together. These clumps smashed into one another, forming larger and larger objects. Some of them grew big enough for their gravity to shape them into spheres, becoming planets, dwarf planets, and large moons. In other cases, planets did not form: the asteroid belt is made of bits and pieces of the early solar system that could never quite come together into a planet. Other smaller leftover pieces became asteroids, comets, meteoroids, and small, irregular moons.
 '''
 
+sun_stats = {
+    "Mass": "1,988,500 X 10^24kg",
+    "Diameter": "1,391,000 km",
+    "Density": "1408 kg/m3",
+    "Mean Temperature": "5505°C"
+}
+
+mercury_stats = {
+    "Mass": "0.33 X 10^24kg",
+    "Diameter": "4879 km",
+    "Density": "5429 kg/m3",
+    "Orbit velocity": "47.4 km/s",
+    "Mean Temperature": "167°C "
+}
+
+venus_stats = {
+    "Mass": "4.87 X 10^24kg",
+    "Diameter": "12,104 km",
+    "Density": "5243 kg/m3",
+    "Orbit velocity": "35.0 km/s",
+    "Mean Temperature": "464°C"
+}
+
+earth_stats = {
+    "Mass": "5.97 X 10^24kg",
+    "Diameter": "12,756 km",
+    "Density": "5514 kg/m3",
+    "Orbit velocity": "29.8 km/s",
+    "Mean Temperature": "15°C"
+}
+
+mars_stats = {
+    "Mass": "0.642 X 10^24kg",
+    "Diameter": "6792 km",
+    "Density": "3934 kg/m3",
+    "Orbit velocity": "24.1 km/s",
+    "Mean Temperature": "-65°C"
+}
+
+jupiter_stats = {
+    "Mass": "1898 X 10^24kg",
+    "Diameter": "142,984 km",
+    "Density": "1326 kg/m3",
+    "Orbit velocity": "13.1 km/s",
+    "Mean Temperature": "-110°C"
+
+}
+
+saturn_stats = {
+    "Mass": "568 X 10^24kg",
+    "Diameter": "120,536 km",
+    "Density": "687 kg/m3",
+    "Orbit Velocity": "9.7km/s",
+    "Mean Temperature": "-140°C"
+
+}
+
+
+uranus_stats = {
+
+    "Mass": "86.8 X 10^24kg",
+    "Diameter": "51,118 km",
+    "Density": "1270 kg/m3",
+    "Orbit Velocity": "6.8km/s",
+    "Mean Temperature": "-195°C"
+
+}
+
+
+neptune_stats = {
+    "Mass": "102 X 10^24kg",
+    "Diameter": "49,528 km",
+    "Density": "1638 kg/m3",
+    "Orbit Velocity": "5.4km/s",
+    "Mean Temperature": "-200°C"
+
+}
+
+solar_system_dicts = [sun_stats, mercury_stats, venus_stats, earth_stats, mars_stats, jupiter_stats, saturn_stats, uranus_stats, neptune_stats]
 solar_system_info = [sun_info, mercury_info, venus_info, earth_info, mars_info, jupiter_info, saturn_info, uranus_info, neptune_info]

@@ -1,2 +1,3 @@
 from login_file import login
-login()
+if __name__ == '__main__':
+    login()

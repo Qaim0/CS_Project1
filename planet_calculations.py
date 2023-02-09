@@ -1,4 +1,5 @@
 import math
+from datetime import date
 # ELEMENTS @ J2000: a(orbit size), e(orbit shape), i(orbit inclination), mean longitude (L), longitude of perihelion,
 # longitude of ascending node
 all_planetElements = [
@@ -44,18 +45,25 @@ def gregorian_to_julian(year, month, day):
     jd += int((1461 * (year + 4800 + i)) / 4)
     jd += int((367 * (month - 2 - (12 * i))) / 12)
     jd -= int((3 * int((year + 4900 + i) / 100)) / 4)
-    return jd
+    jc = (jd - 2451545) / 36525  # 2451545: Julian date at J2000
+    # 36525: 1 julian century in days
+    return jc
 
 
+#
+# def gregorian_to_julian(year, month, day):
+#     jd = date(year, month, day).toordinal() + 1721425
+#     jc = (jd - 2451545) / 36525
+#     return jc
+def convert_to_km(my_distance, metric):
+    if metric == 'KM':
+        my_distance *= 149597870.7
+    return my_distance
 
 
-
-
-
-def julian_cent_since_epoch(year): # only approximate
-    julian_year = year-2000 # here we are acting as if julian year equal to calendar year, they are basically almost same
-    julian_century = round(julian_year / 100, 6)
-    return julian_century
+def calculate_distance(planet1, planet2):
+    distance = (((planet2.x - planet1.x) ** 2) + (planet2.y - planet1.y) ** 2) ** 0.5
+    return round(distance, 2)
 
 
 def increment_date(year, month, day):

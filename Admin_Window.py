@@ -1,9 +1,11 @@
 from tkinter import *
-import sql_functions, hashlib
+from mysql_functions import *
+import hashlib
 from tkinter import ttk, messagebox
 from tkcalendar import DateEntry
 from datetime import date
 import random
+from validation import is_capitalised, manage_user_login, is_string
 
 
 
@@ -17,7 +19,7 @@ int_vars = []
 frame4 = 0
 frames = 0
 my_grey = "#333333"
-my_blue = "#0a95ad"
+my_orange = "#ee8968"
 my_font = "Gotham"
 
 main_labelx = 250
@@ -33,7 +35,7 @@ f4 = 0
 f5 = 0
 
 
-def submit_request_decision(request_lst):
+def submit_request_decision(w, request_lst):
     global int_vars, current_id
 
     for i in int_vars:
@@ -44,17 +46,18 @@ def submit_request_decision(request_lst):
         try:
             current_id = id_lst[index]
         except:
-            sql_functions.delete_record("REQUESTS", current_id)
+            delete_record("REQUESTS", current_id)
             print(f"{current_id} has been denied")
         else:
             if index == id_lst.index(current_id):
                 if request_lst[count][1] == "UNBAN":
-                    sql_functions.delete_record("REQUESTS", current_id)
-                    sql_functions.access_permition(current_id, True)
+                    delete_record("REQUESTS", current_id)
+                    access_permition(current_id, True)
                 else:
                     print("Password has been reset")
             else:
                 print(f"{current_id} has been denied")
+    refresh(w)
 
 
 def refresh(w):
@@ -69,7 +72,7 @@ def admin_window(w):
     window.title("Admin Window")
     window.config(bg='#333333')
 
-    request_lst = sql_functions.show_request_records()
+    request_lst = show_request_records()
 
     notebook = ttk.Notebook(window, style='lefttab.TNotebook')
 
@@ -84,17 +87,17 @@ def admin_window(w):
         notebook.add(frames[i], text=f'{frame_options[i]}')
     frame4 = frames[3]
 
-    submit = Button(frame4, text="SUBMIT", padx=5, pady=5, width=10, bg="#0a95ad", fg="white",
+    submit = Button(frame4, text="SUBMIT", padx=5, pady=5, width=10, bg=my_orange, fg="white",
                     font=(my_font, 12, 'bold'),
-                    command=lambda: submit_request_decision(request_lst))  # this is the actual request of the user
-    next_page = Button(frame4, text="NEXT PAGE", padx=5, pady=5, width=10, bg="#0a95ad", fg="white",
+                    command=lambda: submit_request_decision(window, request_lst))  # this is the actual request of the user
+    next_page = Button(frame4, text="NEXT PAGE", padx=5, pady=5, width=10, bg=my_orange, fg="white",
                        font=(my_font, 12, 'bold'))
     submit.place(x=650, y=320)
     next_page.place(x=500, y=320)
-
-    refresh_btn = Button(frames[3], text="REFRESH", padx=5, pady=5, width=10, bg="#0a95ad", fg="white",
-                         font=(my_font, 12, 'bold'), command=lambda :refresh(window))
-    refresh_btn.place(x=350, y=320)
+    #
+    # refresh_btn = Button(frame4, text="REFRESH", padx=5, pady=5, width=10, bg=my_orange, fg="white",
+    #                      font=(my_font, 12, 'bold'), command=lambda :refresh(window))
+    # refresh_btn.place(x=350, y=320)
 
     create_account_page(frames[1]) # creating account page
     account_info_page(frames[0])
@@ -124,10 +127,10 @@ def request_page():
 
     Label(frame4, text="User Requests", width=20, font=("Gotham", 20, 'bold'), fg="white", bg="#333333").place(x=main_labelx, y=main_labely)
 
-    while x < sql_functions.count_records("REQUESTS"):
-        request_lst = sql_functions.show_request_records()
+    while x < count_records("REQUESTS"):
+        request_lst = show_request_records()
         id_lst.append(request_lst[x][0])
-        Label(frame4, text=f"{request_lst[x][0]: <50}{request_lst[x][1]: <50}{request_lst[x][2]: <50}", font=("Gotham", 12), fg="#0a95ad", bg="#333333").place(x=20, y=y)
+        Label(frame4, text=f"{request_lst[x][0]: <50}{request_lst[x][1]: <50}", font=("Gotham", 12), fg="#0a95ad", bg="#333333").place(x=20, y=y)
 
         k = IntVar()
         int_vars.append(k)
@@ -143,30 +146,44 @@ def request_page():
         y+=40
 
 
+def generate_id(firstname, surname):
+    user_id = ''
+    unique = False
+    while not unique:
+        random_num = random.randint(100, 999)
+        user_id = f"{surname[0:4]}{firstname[0].lower()}{random_num}" # uses 4 letters of surname + first letter of first name and one random digit
+        if is_unique_id(user_id):
+            unique = True
+    return user_id
+
 
 
 def create_account(entry1, entry2, entry3):
-    global student_id
-    unique = False
+    global user_id
     firstname = entry1.get()
     surname = entry2.get()
+    if len(firstname) == 0 or len(surname) == 0:
+        messagebox.showerror(message='Error: entry box must not be empty')
+        return
+    if is_string(firstname, surname):
+        if not is_capitalised(firstname, surname):
+            messagebox.showerror(message='Error: firstname and surname need to be capitalized')
+            return
+    else:
+        messagebox.showerror(message='Error: firstname and surname should be letters only!')
+        return
     dob = entry3.get()
     print(dob)
     dob = dob.split("/")
 
+    user_id = generate_id(firstname, surname)
 
-    while unique == False:
-        random_num = random.randint(100, 999)
-        student_id = f"{surname[0:4]}{firstname[0].lower()}{random_num}" # uses 4 letters of surname + first letter of first name and one random digit
-        if sql_functions.is_unique_id(student_id):
-            unique = True
+    password = f"Py{dob[0]}{dob[1]}{dob[2]}"
 
-
-    password = f"Sim{dob[0]}{dob[1]}{dob[2]}"
-    messagebox.showinfo(message=f"Username: {student_id}\n\n"
+    messagebox.showinfo(message=f"User ID: {user_id}\n\n"
                                 f"password: {password}")
-    dob = f"{dob[0]}-{dob[1]}-{dob[2]}" #converts into YYYY/MM/DD
-    sql_functions.insert_record_users(student_id, dob, firstname, surname, password)
+
+    insert_record_users(user_id, password)
 
 
 def change_tab():
@@ -178,25 +195,26 @@ def change_tab():
 
 
 def account_action(intvar, id):
+    print(intvar.get())
     if intvar.get() == 1: # Reset password radiobutton selected
         pass
     elif intvar.get() == 2:
         answer = messagebox.askquestion(message=f"ID: {id}\n Would you like to delete this account?")
         if answer == "yes":
             print("delete")
-            sql_functions.delete_record("USERS", id)
-            if sql_functions.username_exists_check(id, "REQUESTS"):
-                sql_functions.delete_record("REQUESTS", id)
+            delete_record("USERS", id)
+            if username_exists_check(id, "REQUESTS"):
+                delete_record("REQUESTS", id)
             messagebox.showinfo(message="Account has been deleted")
     elif intvar.get() == 3:
         answer = messagebox.askquestion(message=f"ID: {id}\n Would you like to deny access for this account?")
         if answer == "yes":
-            sql_functions.access_permition(id, False)
+            access_permition(id, False)
             messagebox.showinfo(message="Account no longer has access")
     elif intvar.get() == 4:
         answer = messagebox.askquestion(message=f"ID: {id}\n Would you like to grant access for this account?")
         if answer == "yes":
-            sql_functions.access_permition(id, True)
+            access_permition(id, True)
             messagebox.showinfo(message="Account now has access")
 
 
@@ -205,10 +223,10 @@ def account_action(intvar, id):
 
 def create_account_page(frame):
     main_label = Label(frame, text="Create Student Account", width=20, font=("Gotham", 20, 'bold'), fg="white", bg="#333333")
-    firstname = Label(frame, text="Firstname", font=("Gotham", 9), fg="#0a95ad", bg="#333333")
-    surname = Label(frame, text="Surname", font=("Gotham", 9), fg="#0a95ad", bg="#333333") # fg = blue, bg= perfect grey
-    dob = Label(frame, text="DoB", font=("Gotham", 9), fg="#0a95ad", bg="#333333")
-    submit = Button(frame,text="Create", padx=5, pady=5, width=10, bg="#0a95ad", fg="white", font=(my_font, 12, 'bold'), command=lambda :create_account(entry1, entry2, dob_entry))
+    firstname = Label(frame, text="Firstname", font=("Gotham", 9), fg=my_orange, bg="#333333")
+    surname = Label(frame, text="Surname", font=("Gotham", 9), fg=my_orange, bg="#333333") # fg = blue, bg= perfect grey
+    dob = Label(frame, text="DoB", font=("Gotham", 9), fg=my_orange, bg="#333333")
+    submit = Button(frame,text="Create", padx=5, pady=5, width=10, bg=my_orange, fg="white", font=(my_font, 12, 'bold'), command=lambda :create_account(entry1, entry2, dob_entry))
 
 
 
@@ -230,15 +248,15 @@ def manage_account_page1(frame):
     x=20
     radio_options1 = ["RESET PASSWORD", "DELETE ACCOUNT", "RESTRICT ACCESS", "ALLOW ACCESS"]
 
-    intvar = IntVar()
+    intvariable = IntVar()
     Label(frame, text="Manage Accounts", width=20, font=("Gotham", 20, 'bold'), fg="white", bg="#333333").place(x=250, y=20)
-    Label(frame, text="Enter Student ID", font=("Gotham", 9), fg="#0a95ad", bg="#333333", bd=0, activebackground="#333333").place(x=150, y=100)
+    Label(frame, text="Enter Student ID", font=("Gotham", 9), fg="#ee8968", bg="#333333", bd=0, activebackground="#333333").place(x=150, y=100)
     student_ID_entry = Entry(frame, width=35, font=("Gotham", 20), fg="white", bg=my_grey)
-    submit = Button(frame, text="SUBMIT", padx=5, pady=5, width=10, bg="#0a95ad", fg="white",
-                    font=(my_font, 12, 'bold'), command=lambda :validate_user(student_ID_entry.get(), "ADMIN_SEARCH", None, intvar, ""))
+    submit = Button(frame, text="SUBMIT", padx=5, pady=5, width=10, bg="#ee8968", fg="white",
+                    font=(my_font, 12, 'bold'), command=lambda :admin_options(student_ID_entry.get(), "ADMIN_SEARCH", intvariable))
 
     for i in range(4): # 1st set of radio buttons
-        Radiobutton(frame, text=radio_options1[i], variable=intvar, value=i+1, bg=my_grey, fg=my_blue, activebackground=my_grey).place(x=x, y=200)
+        Radiobutton(frame, text=radio_options1[i], variable=intvariable, value=i+1, bg=my_grey, fg=my_orange, activebackground=my_grey).place(x=x, y=200)
         x+=200
 
 
@@ -258,7 +276,7 @@ def account_info_page(frame): # need to add parameters of entries
     xcord = 250
     ycord=75
     labels = ["ACCOUNT NAME:", "NUMBER OF ACTIVE ACCOUNTS: ", "NUMBER OF DISABLED ACCOUNTS:"]
-    account_infos = ["Admin01", (sql_functions.num_of_records(True))-1, sql_functions.num_of_records(False)] #-1 to take away admin account as being accounted for
+    account_infos = ["Admin01", (num_of_records(True))-1, num_of_records(False)] #-1 to take away admin account as being accounted for
     main_label = Label(frame, text="Account Information", width=20, font=("Gotham", 20, 'bold'), fg="white", bg="#333333")
     main_label.place(x=250, y=20)
 
@@ -271,21 +289,21 @@ def account_info_page(frame): # need to add parameters of entries
         entry.place(x=xcord, y=ycord+30)
 
         ycord += 90
-    change_pass_button = Button(frame, text="change password", font=("Gotham", 9), fg="#0a95ad", bg="#333333", bd=0, activebackground="#333333", command=change_tab)
+    change_pass_button = Button(frame, text="change password", font=("Gotham", 9), fg="#ee8968", bg="#333333", bd=0, activebackground="#333333", command=change_tab)
     change_pass_button.place(x=480, y=320)
 
-
-def validate_user(id, option, password, int_var, w):
+#
+def admin_options(id, option, int_var):
     error = False
     if option == "RESET" or option == "ADMIN_SEARCH":  # table is required for first option as username check can be used for several tables
-        if sql_functions.username_exists_check(id, "USERS"):
+        if username_exists_check(id, "USERS"):
             if id == "Admin01":
                 error = True
             if option == "RESET":
-                if sql_functions.username_exists_check(id, "REQUESTS"):# checks to see if request already sent
+                if username_exists_check(id, "REQUESTS"):# checks to see if request already sent
                     messagebox.showerror(message="Error: Already sent request \n please wait until current request fulfilled")
                 else:
-                    sql_functions.insert_record_requests(id, "RESET PASSWORD", 0)
+                    insert_record_requests(id, "RESET PASSWORD")
                     reset_question = messagebox.askquestion(message="Are you sure you would like to reset password?")
                     if reset_question == "yes":
                         messagebox.showinfo(message="Password reset request has been sent")
@@ -296,23 +314,6 @@ def validate_user(id, option, password, int_var, w):
             error = True
     if error:
         messagebox.showerror(message="User does not exist")
-    elif option == "LOGIN":
-        if sql_functions.user_exists(id, password):
-            if sql_functions.user_has_access(id):
-                if id == "Admin01":
-                    admin_window(w)
-                else:
-                    print("Gained access")
-            else:
-                answer = messagebox.askquestion("You no longer have Access. Would you like to request Access?")
-                if answer == "yes":
-                    if sql_functions.username_exists_check(id, "REQUESTS"):  # checks to see if request already sent
-                        messagebox.showerror(message="Error: Already sent request \n please wait until current request fulfilled")
-                    else:
-                        sql_functions.insert_record_requests(id, "UNBAN", 0)
-                        messagebox.showinfo("Unban request has been sent")
-
-        else:
-            messagebox.showerror(message="Username/Password invalid")
-
-
+def login_entry(entry_id, entry_password, w):
+    if manage_user_login(entry_id, entry_password, w):
+        admin_window(w)
