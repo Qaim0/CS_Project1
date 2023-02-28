@@ -49,7 +49,7 @@ def gregorian_to_julian(year, month, day):
     # 36525: 1 julian century in days
     return jc
 
-
+print(gregorian_to_julian(2027, 3, 43))
 #
 # def gregorian_to_julian(year, month, day):
 #     jd = date(year, month, day).toordinal() + 1721425
@@ -62,7 +62,7 @@ def convert_to_km(my_distance, metric):
 
 
 def calculate_distance(planet1, planet2):
-    distance = (((planet2.x - planet1.x) ** 2) + (planet2.y - planet1.y) ** 2) ** 0.5
+    distance = (((planet2.getx()- planet1.getx()) ** 2) + (planet2.gety() - planet1.gety()) ** 2) ** 0.5
     return round(distance, 2)
 
 

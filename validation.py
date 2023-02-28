@@ -53,30 +53,7 @@ def is_capitalised(firstname, surname):
     if not firstname[0].isupper() or not surname[0].isupper():  # checks if firstname AND surname are capitalised
         return False
     return True
-def manage_user_login(id, password, w):
-    print(id, password)
-    if user_exists(id, password):
-        print('asdasdsada')
 
-        if user_has_access(id):
-            if id == "Admin01":
-                return True
-            else:
-                w.destroy()
-                start_sim(id)
-
-        else:
-            answer = messagebox.askquestion("You no longer have Access. Would you like to request Access?")
-            if answer == "yes":
-                if username_exists_check(id, "REQUESTS"):  # checks to see if request already sent
-                    messagebox.showerror(message="Error: Already sent request \n please wait until current request fulfilled")
-                else:
-                    insert_record_requests(id, "UNBAN")
-                    messagebox.showinfo("Unban request has been sent")
-
-
-    else:
-        messagebox.showerror(message="Username/Password invalid")
 
 def is_string(firstname, surname):
     if firstname.isalpha() and surname.isalpha():

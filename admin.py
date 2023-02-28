@@ -5,7 +5,7 @@ from tkinter import ttk, messagebox
 from tkcalendar import DateEntry
 from datetime import date
 import random
-from validation import is_capitalised, manage_user_login, is_string
+from validation import is_capitalised, is_string
 
 
 
@@ -35,11 +35,10 @@ f4 = 0
 f5 = 0
 
 
+
 def submit_request_decision(w, request_lst):
     global int_vars, current_id
 
-    for i in int_vars:
-        print(i.get(), end=" ")
     count = 0
     for i in int_vars: # for every intvar value in intvars
         index = i.get() # intvar value
@@ -47,16 +46,11 @@ def submit_request_decision(w, request_lst):
             current_id = id_lst[index]
         except:
             delete_record("REQUESTS", current_id)
-            print(f"{current_id} has been denied")
         else:
             if index == id_lst.index(current_id):
                 if request_lst[count][1] == "UNBAN":
                     delete_record("REQUESTS", current_id)
                     access_permition(current_id, True)
-                else:
-                    print("Password has been reset")
-            else:
-                print(f"{current_id} has been denied")
     refresh(w)
 
 
@@ -67,7 +61,7 @@ def refresh(w):
 def admin_window(w):
     global frame4
     w.destroy()
-    window = Tk()
+    window = Toplevel()
     window.geometry("800x400")
     window.title("Admin Window")
     window.config(bg='#333333')
@@ -173,7 +167,6 @@ def create_account(entry1, entry2, entry3):
         messagebox.showerror(message='Error: firstname and surname should be letters only!')
         return
     dob = entry3.get()
-    print(dob)
     dob = dob.split("/")
 
     user_id = generate_id(firstname, surname)
@@ -183,7 +176,7 @@ def create_account(entry1, entry2, entry3):
     messagebox.showinfo(message=f"User ID: {user_id}\n\n"
                                 f"password: {password}")
 
-    insert_record_users(user_id, password)
+    insert_user(user_id, password)
 
 
 def change_tab():
@@ -195,23 +188,19 @@ def change_tab():
 
 
 def account_action(intvar, id):
-    print(intvar.get())
-    if intvar.get() == 1: # Reset password radiobutton selected
-        pass
-    elif intvar.get() == 2:
+    if intvar.get() == 0:
         answer = messagebox.askquestion(message=f"ID: {id}\n Would you like to delete this account?")
         if answer == "yes":
-            print("delete")
             delete_record("USERS", id)
             if username_exists_check(id, "REQUESTS"):
                 delete_record("REQUESTS", id)
             messagebox.showinfo(message="Account has been deleted")
-    elif intvar.get() == 3:
+    elif intvar.get() == 1:
         answer = messagebox.askquestion(message=f"ID: {id}\n Would you like to deny access for this account?")
         if answer == "yes":
             access_permition(id, False)
             messagebox.showinfo(message="Account no longer has access")
-    elif intvar.get() == 4:
+    elif intvar.get() == 2:
         answer = messagebox.askquestion(message=f"ID: {id}\n Would you like to grant access for this account?")
         if answer == "yes":
             access_permition(id, True)
@@ -246,18 +235,21 @@ def create_account_page(frame):
 
 def manage_account_page1(frame):
     x=20
-    radio_options1 = ["RESET PASSWORD", "DELETE ACCOUNT", "RESTRICT ACCESS", "ALLOW ACCESS"]
+    radio_options1 = ["DELETE ACCOUNT", "RESTRICT ACCESS", "ALLOW ACCESS"]
 
     intvariable = IntVar()
     Label(frame, text="Manage Accounts", width=20, font=("Gotham", 20, 'bold'), fg="white", bg="#333333").place(x=250, y=20)
     Label(frame, text="Enter Student ID", font=("Gotham", 9), fg="#ee8968", bg="#333333", bd=0, activebackground="#333333").place(x=150, y=100)
     student_ID_entry = Entry(frame, width=35, font=("Gotham", 20), fg="white", bg=my_grey)
+
+
+    for i in range(3): # 1st set of radio buttons
+        Radiobutton(frame, text=radio_options1[i], variable=intvariable, value=i, bg=my_grey, fg=my_orange, activebackground=my_grey).place(x=x, y=200)
+        x+=200
+
+
     submit = Button(frame, text="SUBMIT", padx=5, pady=5, width=10, bg="#ee8968", fg="white",
                     font=(my_font, 12, 'bold'), command=lambda :admin_options(student_ID_entry.get(), "ADMIN_SEARCH", intvariable))
-
-    for i in range(4): # 1st set of radio buttons
-        Radiobutton(frame, text=radio_options1[i], variable=intvariable, value=i+1, bg=my_grey, fg=my_orange, activebackground=my_grey).place(x=x, y=200)
-        x+=200
 
 
     #reset_password.place(x=120, y=200)
@@ -303,7 +295,7 @@ def admin_options(id, option, int_var):
                 if username_exists_check(id, "REQUESTS"):# checks to see if request already sent
                     messagebox.showerror(message="Error: Already sent request \n please wait until current request fulfilled")
                 else:
-                    insert_record_requests(id, "RESET PASSWORD")
+                    insert_request(id, "RESET PASSWORD")
                     reset_question = messagebox.askquestion(message="Are you sure you would like to reset password?")
                     if reset_question == "yes":
                         messagebox.showinfo(message="Password reset request has been sent")
@@ -314,6 +306,5 @@ def admin_options(id, option, int_var):
             error = True
     if error:
         messagebox.showerror(message="User does not exist")
-def login_entry(entry_id, entry_password, w):
-    if manage_user_login(entry_id, entry_password, w):
-        admin_window(w)
+
+

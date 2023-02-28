@@ -1,7 +1,9 @@
 from tkinter import *
 # from validate_user import validate
 from PIL import ImageTk, Image
-from Admin_Window import login_entry
+from  mysql_functions import user_exists, user_has_access, messagebox, username_exists_check, insert_request
+from admin import admin_window
+from simulation import start_sim
 my_grey = "#333333"
 my_orange = "#ee8968"
 my_font = "Gotham"
@@ -12,7 +14,7 @@ main_labely = 20
 first_labelx = 250
 first_labely = 105
 
-def login():
+def login_page():
     window = Tk()
     window.geometry("800x400")
     window.config(bg=my_grey)
@@ -42,4 +44,31 @@ def login():
     submit.place(x=350, y=330)
     window.mainloop()
 
-login()
+def login(id, password, w):
+    print(id, password)
+    if user_exists(id, password):
+        print('asdasdsada')
+        if user_has_access(id):
+            if id == "Admin01":
+                return True
+            else:
+                w.destroy()
+                start_sim(id)
+
+        else:
+            answer = messagebox.askquestion("You no longer have Access. Would you like to request Access?")
+            if answer == "yes":
+                if username_exists_check(id, "REQUESTS"):  # checks to see if request already sent
+                    messagebox.showerror(message="Error: Already sent request \n please wait until current request fulfilled")
+                else:
+                    insert_request(id, "UNBAN")
+                    messagebox.showinfo("Unban request has been sent")
+
+
+    else:
+        messagebox.showerror(message="Username/Password invalid")
+def login_entry(entry_id, entry_password, w):
+    if login(entry_id, entry_password, w):
+        admin_window(w)
+
+login_page()

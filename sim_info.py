@@ -6,25 +6,27 @@ instructions = '''
 
 Space - pause simulation
 
-D - increase simulation speed
+D - Increase simulation speed
 
-A – decrease simulation speed
+A – Decrease simulation speed
 
-S – toggle orbit lines
+S – Toggle orbit lines
 
-C- centre screen
+C- Centre screen
 
-Arrow keys- move screen
+Arrow keys- Move perspective
 
-Mouse right-click- toggle planet info
+Mouse right-click- Toggle planet statistics
 
-Mouse left-click- select planet / widget
+Mouse left-click- Select planet / widget
 
-Mouse scroll down / up - zoom out / zoom in
+Mouse scroll down / up - Zoom out / Zoom in
 
---------------- Guidance on physics manipulation --------------
+--------------- Extra Guidance --------------
 
+To change the date of the simulation, click on the date text and enter a date in the format YYYY-M-D
 
+Graphs can be customized in settings
 
 Planets from mercury to jupiter can be manipulated, other planets require more complex calculations and adaptations
 
