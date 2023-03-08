@@ -1,3 +1,3 @@
-from login_file import login
+from login_file import login_page
 if __name__ == '__main__':
-    login()
+    login_page()

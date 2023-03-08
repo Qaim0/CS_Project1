@@ -1,10 +1,9 @@
 # from sql_functions import *
 # from Admin_Window import account_action, admin_window
-from simulation import start_sim
-import pygame
+# import pygame
 from tkinter import messagebox
-from mysql_functions import *
-pygame.display.set_mode((1, 1))
+from database_init import conn, cursor
+import hashlib
 #
 # go = True
 # def validate(window, id, option, password, int_var, w):
@@ -53,9 +52,74 @@ def is_capitalised(firstname, surname):
     if not firstname[0].isupper() or not surname[0].isupper():  # checks if firstname AND surname are capitalised
         return False
     return True
+def user_exists(id, password):
+    cursor.execute("SELECT USER_ID, PASSWORD FROM USERS")
+    hashed_encrypt = hashlib.md5(password.encode())
+    hashed_password = hashed_encrypt.hexdigest()
+    for record in cursor.fetchall():
+        print(record)
+        if id == record[0]:
+            if hashed_password == record[1]:
+                return True
+    return False
 
+def username_exists(id, table):
+    print(id)
+    cursor.execute("SELECT USER_ID FROM " + table) # gets all user IDs from a table
+    for record in cursor.fetchall():
+        print(record[0])
+        if id == record[0]:
+            return True
+    return False
 
-def is_string(firstname, surname):
-    if firstname.isalpha() and surname.isalpha():
+def user_has_access(id):
+    if username_exists(id, 'USERS'):
+        cursor.execute("SELECT ACCESS from USERS where USER_ID = %s", (id,))
+        for record in cursor.fetchall():
+            if record[0] == 0:
+                return False
         return True
     return False
+#
+
+def letters_only(firstname, surname):
+    if firstname.isalpha() and surname.isalpha(): # if alphabetical letters only
+        return True
+    return False
+
+
+def entries_filled(firstname, surname):
+    # also checks if spaces in firstname and surname
+    if len(firstname) == 0 or len(surname) == 0 or ' ' in firstname or ' ' in surname:
+        return False
+    return True
+
+def validate_user_details(firstname, surname):
+    if not entries_filled(firstname, surname): # if any entry boxes empty
+        messagebox.showerror(message='Error: Entry box(s) must not be empty')
+        return False
+    elif letters_only(firstname, surname): # if first name and surname contain letters only
+        if is_capitalised(firstname, surname): # if they are  capitalised
+            return True # first name and surname are valid
+        else:
+            messagebox.showerror(message='Error: firstname and surname should be capitalized')
+            return False
+
+    else:
+        messagebox.showerror(message=
+                             'Error: firstname & surname should consist of letters only!')
+        return False
+
+def login_validated(id, password):
+    if user_exists(id, password):
+        print('asdasdsada')
+        if user_has_access(id):
+            return True
+    else:
+        messagebox.showerror(message="Username/Password invalid")
+
+    return False
+
+
+
+print(user_exists('mytest2', 'testing'))

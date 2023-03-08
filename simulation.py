@@ -6,7 +6,7 @@ from pygame.locals import *
 
 from button_class import Button
 from graphs import *
-from mysql_functions import user_has_access
+from validation import user_has_access
 from calculations import *
 from sim_info import solar_system_info, instructions, system_info, solar_system_dicts
 from widgets import create_widgets, colour_dict
@@ -164,7 +164,6 @@ class Body:
 
         if self.default_vals:
             self.__semi_major = planet_elements[0] + (planet_rates[0] * jul_centuries)  # AU (CONSTANT) aGen
-            print(self.__semi_major)
             self.__eccentricity = planet_elements[1] + (planet_rates[1] * jul_centuries)  # CONSTANT eGen
 
         orbit_incl = planet_elements[2] + (planet_rates[2] * jul_centuries)  # ORBIT INCLINCATION: CONSTANT iGen
@@ -966,12 +965,18 @@ def start_sim(id):
             first_run = False
 
         pygame.display.update()
+
     pygame.quit()
 
-# start_sim('Admin01')
+    window = Tk()
+    window.withdraw()
+    messagebox.showerror(message='You no longer have access! Closing simulation...')
+    window.destroy()
+    window.mainloop()
 
-# if __name__ == '__main__':
-#     window = Tk()
-#     messagebox.showerror(message='You no longer have access! Closing simulation...')
-#     window.destroy()
-#     window.mainloop()
+
+
+if __name__ == '__main__':
+    pass
+    # start_sim('PyAdmin727')
+
