@@ -1,3 +1,12 @@
+
+# main window colour, overlay colour
+dark_grey_colours = ['black', (36, 36, 36)]  # black and grey
+grey_colours = [(220, 220, 220), (36, 36, 36)]  # black and grey
+dark_blue_colours = ['#05070f', (12, 15, 26)]  # dark blue and darker blue
+
+
+
+
 instructions = '''
 
 
@@ -55,13 +64,19 @@ sun_info = '''
 
 The sun is a yellow dwarf star in the centre of the solar system, and it is the largest, brightest and most massive object in the system.
 
-Before the main sequence, stars like the sun exist as what is known as protostars, gathering mass from their surroundings and growing to the mass required to initiate fusion.
+Before the main sequence, stars like the sun exist as what is known as protostars, gathering mass from their surroundings and growing 
+to the mass required to initiate fusion.
 
-The sun formed around 4.5 billion years ago. At that time, the area of the Milky Way galaxy that would become the solar system consisted of a dense cloud of gas, the remnants of an earlier generation of stars. The densest region of this cloud collapsed and gave rise to the protostar that would become the sun. As this young protostar grew, planets, moons and asteroids formed around it from what remained of this raw material, bound in orbit to their parent star by its immense gravity.
+The sun formed around 4.5 billion years ago. At that time, the area of the Milky Way galaxy that would become the solar system 
+consisted of a dense cloud of gas, the remnants of an earlier generation of stars. The densest region of this cloud collapsed and 
+gave rise to the protostar that would become the sun.
 
-At the heart of the sun, this same force sparked nuclear fusion that powers the star. The heat and light from this nuclear reaction enabled life on Earth to evolve and prosper. However, this reaction will eventually lead to the sun’s demise, as the sun will eventually run out of nuclear fuel
+At the heart of the sun, this same force sparked nuclear fusion that powers the star. The heat and light from this nuclear reaction 
+enabled life on Earth to evolve and prosper. However, this reaction will eventually lead to the sun’s demise, as the sun will 
+eventually run out of nuclear fuel
 
-Like all main-sequence stars, most of the sun's mass is made up of hydrogen, with some helium and traces of heavier elements, which are referred to as the metallicity or “Z” of a star (the astronomical definition of a metal is "any element heavier than helium").'''
+Like all main-sequence stars, most of the sun's mass is made up of hydrogen, with some helium and traces of heavier elements, 
+which are referred to as the metallicity or “Z” of a star (the astronomical definition of a metal is "any element heavier than helium").'''
 
 mercury_info = '''
                            MERCURY
@@ -75,17 +90,25 @@ mercury_info = '''
 • Age: 4.503 billion years
 
 
-The smallest planet in our solar system and nearest to the Sun, Mercury is only slightly larger than Earth's Moon. From the surface of Mercury, the Sun would appear more than three times as large as it does when viewed from Earth, and the sunlight would be as much as seven times brighter.
+The smallest planet in our solar system and nearest to the Sun, Mercury is only slightly larger than Earth's Moon. 
 
-Mercury's surface temperatures are both extremely hot and cold. Because the planet is so close to the Sun, day temperatures can reach highs of 800°F (430°C). Without an atmosphere to retain that heat at night, temperatures can dip as low as -290°F (-180°C).
+From the surface of Mercury, the Sun would appear more than three times as large as it does when viewed from Earth, and the sunlight 
+would be as much as seven times brighter.
 
-Despite its proximity to the Sun, Mercury is not the hottest planet in our solar system – that title belongs to nearby Venus, thanks to its dense atmosphere. But Mercury is the fastest planet, zipping around the Sun every 88 Earth days.
+Mercury's surface temperatures are both extremely hot and cold. Because the planet is so close to the Sun, day temperatures can reach 
+highs of 800°F (430°C). Without an atmosphere to retain that heat at night, temperatures can dip as low as -290°F (-180°C).
+
+Despite its proximity to the Sun, Mercury is not the hottest planet in our solar system – that title belongs to nearby Venus, thanks 
+to its dense atmosphere. But Mercury is the fastest planet, zipping around the Sun every 88 Earth days.
 
 --------------------Size and Distance--------------------
 
-With a radius of 1,516 miles (2,440 kilometres), Mercury is a little more than 1/3 the width of Earth. If Earth were the size of a nickel, Mercury would be about as big as a blueberry.
+With a radius of 1,516 miles (2,440 kilometres), Mercury is a little more than 1/3 the width of Earth. If Earth were the size of a 
+nickel, Mercury would be about as big as a blueberry.
 
-From an average distance of 36 million miles (58 million kilometres), Mercury is 0.4 astronomical units away from the Sun. One astronomical unit (abbreviated as AU) is the distance from the Sun to Earth. From this distance, it takes sunlight 3.2 minutes to travel from the Sun to Mercury.
+From an average distance of 36 million miles (58 million kilometres), Mercury is 0.4 astronomical units away from the Sun. One 
+astronomical unit (abbreviated as AU) is the distance from the Sun to Earth. From this distance, it takes sunlight 
+3.2 minutes to travel from the Sun to Mercury.
 
 '''
 venus_info = '''
@@ -100,13 +123,15 @@ venus_info = '''
 • Age: 4.503 billion years
 
 
-Venus is the second planet from the Sun and is Earth's closest neighbour in the solar system. Venus is the brightest object in the sky after the Sun and the Moon, and sometimes looks like a bright star in the morning or evening sky. The planet is a little smaller than Earth and is like Earth inside. We can't see the surface of Venus from Earth, because it is covered with thick clouds. However, space missions to Venus have shown us that its surface is covered with craters, volcanoes, mountains, and big lava plains. The surface of Venus is not where you'd like to be, with temperatures that can melt lead, an atmosphere so thick it would crush you, and clouds of sulfuric acid.
+Venus is the second planet from the Sun and is Earth's closest neighbour in the solar system. Venus is the brightest object in the sky after the Sun and the Moon, and sometimes looks like a bright star in the morning or evening sky. 
+We can't see the surface of Venus from Earth, because it is covered with thick clouds. However, space missions to Venus have shown us that its surface is covered with craters, volcanoes, mountains, and big lava plains. 
 
 --------------------Air on Venus--------------------
 
 The atmosphere of Venus is very hot and thick. You would not survive a visit to the surface of the planet - you couldn't breathe the air, you would be crushed by the enormous weight of the atmosphere, and you would burn up in surface temperatures high enough to melt lead.
 
-The atmosphere of Venus is made up mainly of carbon dioxide, and thick clouds of sulfuric acid completely cover the planet. The atmosphere traps the small amount of energy from the sun that does reach the surface along with the heat the planet itself releases. This greenhouse effect has made the surface and lower atmosphere of Venus one of the hottest places in the solar system!
+The atmosphere of Venus is made up mainly of carbon dioxide, and thick clouds of sulfuric acid completely cover the planet. The atmosphere traps the small amount of energy from the sun that does reach the surface along with the heat the planet itself releases. 
+This greenhouse effect has made the surface and lower atmosphere of Venus one of the hottest places in the solar system!
 
 '''
 earth_info = '''
@@ -131,8 +156,10 @@ Earth is the only planet that has a single moon. Our Moon is the brightest and m
 
 Earth sometimes temporarily hosts orbiting asteroids or large rocks. They are typically trapped by Earth's gravity for a few months or years before returning to an orbit around the Sun.
 
-Some moons are bits of rock that were captured by a planet's gravity, but our Moon is likely the result of a collision billions of years ago. When Earth was a young planet, a large chunk of rock smashed into it, displacing a portion of Earth's interior. The resulting chunks clumped together and formed our Moon. With a radius of 1,080 miles (1,738 kilometres), the Moon is the fifth largest moon in our solar system (after Ganymede, Titan, Calisto, and Io).'''
+Some moons are bits of rock that were captured by a planet's gravity, but our Moon is likely the result of a collision billions of years ago. 
 
+When Earth was a young planet, a large chunk of rock smashed into it, displacing a portion of Earth's interior. The resulting chunks clumped together and formed our Moon. With a radius of 1,080 miles (1,738 kilometres), the Moon is the fifth largest moon in our solar system (after Ganymede, Titan, Calisto, and Io).
+'''
 mars_info = '''
                            MARS
 
@@ -147,13 +174,14 @@ mars_info = '''
 
 With a radius of 2,106 miles, Mars is the seventh largest planet in our solar system and about half the diameter of Earth. 
 
-Mars rotates on its axis every 24.6 Earth hours, defining the length of a Martian day, which is called a sol (short for “solar day”). Mars’s axis of rotation is tilted 25.2 degrees relative to the plane of the planet’s orbit around the sun, which helps give Mars seasons like those on Earth. Whichever hemisphere is tilted closer to the sun experiences spring and summer, while the hemisphere tilted away gets fall and winter. At two specific moments each year - called the equinoxes-both hemispheres receive equal illumination.
 
-The primary driver of modern Martian geology is its atmosphere, which is mostly made of carbon dioxide, nitrogen, and argon. By Earth standards, the air is preposterously thin; air pressure atop Mount Everest is about 50 times higher than it is at the Martian surface. Despite the thin air, Martian breezes can gust up to 60 miles an hour, kicking up dust that fuels huge dust storms and massive fields of alien sand dunes.
+The primary driver of modern Martian geology is its atmosphere, which is mostly made of carbon dioxide, nitrogen, and argon. By Earth standards, the air is preposterously thin; air pressure atop Mount Everest is about 50 times higher than it is at the Martian surface. 
 
-Once upon a time, though, wind and water flowed across the red planet. Robotic rovers have found clear evidence that billions of years ago, lakes and rivers of liquid water coursed across the red planet’s surface. This means that at some point in the distant past, Mars’s atmosphere was sufficiently dense and retained enough heat for water to remain liquid on the red planet’s surface. Not so today: Though water
+Once upon a time, though, wind and water flowed across the red planet. Robotic rovers have found clear evidence that billions of years ago, lakes and rivers of liquid water coursed across the red planet’s surface. 
 
-ice abounds under the Martian surface and in its polar ice caps, there are no large bodies of liquid water on the surface there today.'''
+This means that at some point in the distant past, Mars’s atmosphere was sufficiently dense and retained enough heat for water to remain liquid on the red planet’s surface. 
+However there are no large bodies of liquid water on the surface there today.
+'''
 jupiter_info = '''
                            JUPITER
 
@@ -166,7 +194,7 @@ jupiter_info = '''
 • Age: 4.603 billion years
 
 
-Jupiter is the fifth planet from our Sun and is, by far, the largest planet in the solar system – more than twice as massive as all the other planets combined. Jupiter's stripes and swirls are cold, windy clouds of ammonia and water, floating in an atmosphere of hydrogen and helium. Jupiter’s iconic Great Red Spot is a giant storm bigger than Earth that has raged for hundreds of years.
+Jupiter is the fifth planet from our Sun and is, by far, the largest planet in the solar system – more than twice as massive as all the other planets combined. 
 
 Jupiter is surrounded by dozens of moons. Jupiter also has several rings, but unlike the famous rings of Saturn, Jupiter’s rings are very faint and made of dust, not ice.
 
@@ -175,7 +203,6 @@ Jupiter is surrounded by dozens of moons. Jupiter also has several rings, but un
 With a radius of 43,440.7 miles (69,911 kilometres), Jupiter is 11 times wider than Earth. If Earth were the size of a nickel, Jupiter would be about as big as a basketball.
 
 From an average distance of 484 million miles (778 million kilometres), Jupiter is 5.2 astronomical units away from the Sun. One astronomical unit (abbreviated as AU) is the distance from the Sun to Earth. From this distance, it takes Sunlight 43 minutes to travel from the Sun to Jupiter.
-
 '''
 saturn_info = '''
                            SATURN
@@ -215,7 +242,8 @@ uranus_info = '''
 • Age: 4.503 billion years
 
 
-Uranus is the seventh planet from the Sun and has the third-largest diameter in our solar system. It was the first planet found with the aid of a telescope, Uranus was discovered in 1781 by astronomer William Herschel, although he originally thought it was either a comet or a star. It was two years later that the object was universally accepted as a new planet
+Uranus is the seventh planet from the Sun and has the third-largest diameter in our solar system. It was the first planet found with the aid of a telescope. Uranus was discovered in 1781 by astronomer William Herschel, 
+although he originally thought it was either a comet or a star. It was two years later that the object was universally accepted as a new planet
 
 --------------------Potential for Life--------------------
 
@@ -258,7 +286,9 @@ Beyond our own solar system, there are more planets than stars in the night sky.
 Our solar system formed about 4.5 billion years ago from a dense cloud of interstellar gas and dust. The cloud collapsed, possibly due to the shockwave of a nearby exploding star, called a supernova. When this dust cloud collapsed, it formed a solar nebula – a spinning, swirling disk of material.
 At the centre, gravity pulled more and more material in. Eventually, the pressure in the core was so great that hydrogen atoms began to combine and form helium, releasing a tremendous amount of energy. With that, our Sun was born, and it eventually amassed more than 99% of the available matter.
 
-Matter farther out in the disk was also clumping together. These clumps smashed into one another, forming larger and larger objects. Some of them grew big enough for their gravity to shape them into spheres, becoming planets, dwarf planets, and large moons. In other cases, planets did not form: the asteroid belt is made of bits and pieces of the early solar system that could never quite come together into a planet. Other smaller leftover pieces became asteroids, comets, meteoroids, and small, irregular moons.
+Matter farther out in the disk was also clumping together. These clumps smashed into one another, forming larger and larger objects. Some of them grew big enough for their gravity to shape them into spheres, becoming planets, dwarf planets, and large moons. 
+
+In other cases, planets did not form: the asteroid belt is made of bits and pieces of the early solar system that could never quite come together into a planet. Other smaller leftover pieces became asteroids, comets, meteoroids, and small, irregular moons.
 '''
 
 sun_stats = {
@@ -339,5 +369,5 @@ neptune_stats = {
 
 }
 
-solar_system_dicts = [sun_stats, mercury_stats, venus_stats, earth_stats, mars_stats, jupiter_stats, saturn_stats, uranus_stats, neptune_stats]
-solar_system_info = [sun_info, mercury_info, venus_info, earth_info, mars_info, jupiter_info, saturn_info, uranus_info, neptune_info]
+planet_stats = [sun_stats, mercury_stats, venus_stats, earth_stats, mars_stats, jupiter_stats, saturn_stats, uranus_stats, neptune_stats]
+planet_info = [sun_info, mercury_info, venus_info, earth_info, mars_info, jupiter_info, saturn_info, uranus_info, neptune_info]

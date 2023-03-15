@@ -24,6 +24,8 @@ class Graph:
         self.xlabel = ''
         self.ylabel = ''
         self.lables = [self.xlabel, self.ylabel]
+        self.colours = ['#242424', '#0C0F1A', 'white']
+
 
         self.graph = plt.figure()
         self.ax = self.graph.add_subplot(1, 1, 1)

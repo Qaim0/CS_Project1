@@ -52,35 +52,7 @@ def is_capitalised(firstname, surname):
     if not firstname[0].isupper() or not surname[0].isupper():  # checks if firstname AND surname are capitalised
         return False
     return True
-def user_exists(id, password):
-    cursor.execute("SELECT USER_ID, PASSWORD FROM USERS")
-    hashed_encrypt = hashlib.md5(password.encode())
-    hashed_password = hashed_encrypt.hexdigest()
-    for record in cursor.fetchall():
-        print(record)
-        if id == record[0]:
-            if hashed_password == record[1]:
-                return True
-    return False
 
-def username_exists(id, table):
-    print(id)
-    cursor.execute("SELECT USER_ID FROM " + table) # gets all user IDs from a table
-    for record in cursor.fetchall():
-        print(record[0])
-        if id == record[0]:
-            return True
-    return False
-
-def user_has_access(id):
-    if username_exists(id, 'USERS'):
-        cursor.execute("SELECT ACCESS from USERS where USER_ID = %s", (id,))
-        for record in cursor.fetchall():
-            if record[0] == 0:
-                return False
-        return True
-    return False
-#
 
 def letters_only(firstname, surname):
     if firstname.isalpha() and surname.isalpha(): # if alphabetical letters only
@@ -109,17 +81,3 @@ def validate_user_details(firstname, surname):
         messagebox.showerror(message=
                              'Error: firstname & surname should consist of letters only!')
         return False
-
-def login_validated(id, password):
-    if user_exists(id, password):
-        print('asdasdsada')
-        if user_has_access(id):
-            return True
-    else:
-        messagebox.showerror(message="Username/Password invalid")
-
-    return False
-
-
-
-print(user_exists('mytest2', 'testing'))

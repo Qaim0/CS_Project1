@@ -6,21 +6,15 @@ from pygame.locals import *
 
 from button_class import Button
 from graphs import *
-from validation import user_has_access
+from authentication import user_has_access
 from calculations import *
-from sim_info import solar_system_info, instructions, system_info, solar_system_dicts
+from sim_info import *
 from widgets import create_widgets, colour_dict
 from tkinter import Tk, messagebox
-
+import ptext
 # fonts = pygame.font.get_fonts()
 #     main window colour \ overlay colour / text colour
-dark_grey_colours = ['black', (36, 36, 36)]
-grey_colours = [(220, 220, 220), (36, 36, 36)]
-dark_blue_colours = ['#05070f', (12, 15, 26)]
 font = pygame.font.SysFont('Consolas', 20)
-
-theme_colours = ['#242424', '#0C0F1A', 'white']
-
 pygame.init()
 
 window = pygame.display.set_mode((0, 0), FULLSCREEN | DOUBLEBUF)
@@ -63,11 +57,9 @@ graphs = [distance_graph, anomaly_graph]
 
 class Sim:
     def __init__(self):
-        self.instances = []
-        self.sun = ""
+        self.instances = []  # planets and the sun
         self.scale = 1.0
         self.speed_multiplier = 2.5
-        self.theme = 0  # dark grey, dark blue, light grey
         self.overlay_colour = dark_blue_colours[1]
         self.window_colour = dark_blue_colours[0]
         self.date_edited = False
@@ -78,7 +70,7 @@ class Sim:
         self.sim_accent_colour = 'red'
         self.sim_running = True
         self.distance_metric = 'AU'
-        self.user_access = True
+        self.user_access = True  # to check if users access has changed while sim running
         self.year = 2000
         self.day = 1
         self.month = 1
@@ -98,14 +90,13 @@ class Sim:
             return True
         return False
 
-    def check_theme(self):
-        if self.theme == 0:
+    def change_theme(self, option):
+        if option == 0:
             self.overlay_colour = dark_grey_colours[1]
             self.window_colour = dark_grey_colours[0]
-        elif self.theme == 1:
+        elif option == 1:
             self.overlay_colour = dark_blue_colours[1]
             self.window_colour = dark_blue_colours[0]
-
         else:
             self.overlay_colour = grey_colours[1]
             self.window_colour = grey_colours[0]
@@ -138,7 +129,7 @@ class Body:
         self.stats = []
         self.enableTxt = False
         self.enableDistance = False
-        self.radius_vector = 0
+        self.radius_vector = 0.0
         self.full_orbit_points = []
         self.rotated_once = False
         self.default_vals = True
@@ -146,88 +137,32 @@ class Body:
         self.same_pos = False  # planet hasnt moved on screen (uranus and neptune)
 
         # ------Modifiable planet elements-----#
-        self.__semi_major = 0
-        self.__eccentricity = 0
-        self.orbit_incl = 0
-        self.long_asc = 0
-        self.long_peri = 0
-        self.true_anomaly = 0
+        self.__semi_major = 0.0
+        self.__eccentricity = 0.0
 
     def get_planet_coords(self, planet, jul_centuries):
-        global k, long_perihelion, long_asc_node, orbit_incl
-        k = 0
+        self.__semi_major, self.__eccentricity, orbit_incl, long_asc, long_peri, true_anomaly, \
+            self.radius_vector = calculate_elements(self.name, jul_centuries)
 
-        i = planet_lst.index(planet)
-        planet_elements = all_planetElements[i]
-        planet_rates = all_planetRates[i]
-
-
-        if self.default_vals:
-            self.__semi_major = planet_elements[0] + (planet_rates[0] * jul_centuries)  # AU (CONSTANT) aGen
-            self.__eccentricity = planet_elements[1] + (planet_rates[1] * jul_centuries)  # CONSTANT eGen
-
-        orbit_incl = planet_elements[2] + (planet_rates[2] * jul_centuries)  # ORBIT INCLINCATION: CONSTANT iGen
-        self.orbit_incl = orbit_incl % 360
-        long_asc_node = planet_elements[5] + (
-                planet_rates[5] * jul_centuries)  # LONGITUDE OF ASCENDING NODE (CONSTANT) WGen
-        self.long_asc_node = long_asc_node % 360
-
-        long_perihelion = planet_elements[4] + (planet_rates[4] * jul_centuries)  # LONGITUDE OF PERIHELION wGen
-        self.long_perihelion = long_perihelion % 360
-        if self.long_perihelion < 0:
-            self.long_perihelion = 360 + self.long_perihelion
-
-        orbit_pos = planet_elements[3] + (planet_rates[3] * jul_centuries)  # LGen
-        orbit_pos = (orbit_pos % 360)
-
-        if orbit_pos < 0:
-            orbit_pos = 360 + orbit_pos
-
-        mean_anomaly = orbit_pos - self.long_perihelion
-        k = math.pi / 180.0
-        eccentric_anomaly = calc_ecc_anomaly(self.__eccentricity, mean_anomaly, 6, k)
-
-        anomaly_arg = (math.sqrt((1 + self.__eccentricity) / (1 - self.__eccentricity))) * (
-            math.tan(to_radians(eccentric_anomaly) / 2))
-
-        if anomaly_arg < 0:
-            self.true_anomaly = 2 * (math.atan(anomaly_arg) / k + 180)  # atan = inverse tan
-        else:
-            self.true_anomaly = 2 * (math.atan(anomaly_arg) / k)
-
-        self.radius_vector = self.__semi_major * (
-                    1 - (self.__eccentricity * (math.cos(to_radians(eccentric_anomaly)))))  # rGen
-        planet_x = self.radius_vector * (math.cos(to_radians(self.long_asc_node))
-                                         * math.cos(
-                    to_radians(self.true_anomaly + self.long_perihelion - self.long_asc_node))
-                                         - math.sin(to_radians(self.long_asc_node))
-                                         * math.sin(
-                    to_radians(self.true_anomaly + self.long_perihelion - self.long_asc_node))
-                                         * math.cos(to_radians(self.orbit_incl)))
-        planet_y = self.radius_vector * (math.sin(to_radians(self.long_asc_node))
-                                         * math.cos(
-                    to_radians(self.true_anomaly + self.long_perihelion - self.long_asc_node))
-                                         + math.cos(to_radians(self.long_asc_node))
-                                         * math.sin(
-                    to_radians(self.true_anomaly + self.long_perihelion - self.long_asc_node))
-                                         * math.cos(to_radians(self.orbit_incl)))
+        planet_x, planet_y = calculate_coords(self.radius_vector, long_asc, true_anomaly, long_peri,
+                                              orbit_incl)
 
         return planet_x, planet_y
 
     def generate_stats(self, planet):
         i = solar_system.instances.index(planet)
-        planet_dict = solar_system_dicts[i]
+        planet_dict = planet_stats[i]
         self.stats.append(self.name)
         for key, value in planet_dict.items():
             self.stats.append(str(key) + ": " + str(value))
 
     def display_body_txt(self, y, move_y):
-        global distance
         label = []
         y_val = 20
 
         distance = self.radius_vector
-        distance = convert_to_km(distance, solar_system.distance_metric)
+        if solar_system.distance_metric == 'KM':
+            distance = convert_to_km(distance)
 
         distance = round(distance, 3)
         # automatically set as AU by above function#
@@ -270,7 +205,6 @@ class Body:
         return self.__eccentricity
 
     def draw(self):  # radius scale
-        global line_endx, mercury_icon
         x = self.__x * self.SCALE + SIM_WIDTH / 2
         y = -self.__y * self.SCALE + SIM_HEIGHT / 2
 
@@ -299,7 +233,6 @@ class Body:
 
         self.circleRect = pygame.draw.circle(window, self.colour, (x + solar_system.shiftx, y + solar_system.shifty),
                                              self.radius)
-        # if self.name == 'Uranus' or self.name == 'Neptune':]##
 
         if self.name == 'Saturn' or self.name == 'Jupiter' or self.name == 'Uranus' or self.name == 'Neptune':
             if round(self.__x, 2) == round((self.current_Rectx - self.prev_shiftx) + solar_system.shiftx, 2):
@@ -353,7 +286,6 @@ def set_start_pos(planet):
     planet.startx = planet.getx()
     planet.starty = planet.gety()
     solar_system.orbit_ticks = pygame.time.get_ticks()
-
 
 def create_solarSystem():
     global solar_system
@@ -418,12 +350,11 @@ def get_all_coords(century, first_run):
         for i in range(len(solar_system.instances)):
             solar_system.instances[i].draw()
 
-
 def show_body_info():
     for i in range(len(solar_system.instances)):
         if solar_system.instances[i].clicked_on:
-            blit_text(window, solar_system_info[i], (1360, 350), 'white')
-            # render_multi_line(solar_system_info[i], 1385, 350, 2)
+            blit_text(window, planet_info[i], (1360, 350), 'white')
+
             window.blit(imgs[i], (1470, 170))
 
             return
@@ -434,10 +365,6 @@ def show_body_info():
 def blit_line(text, x, y, colour):
     line = font.render(text, True, colour)
     window.blit(line, (x, y))
-
-
-#
-
 
 def show_controls():
     left_labels_y = 50
@@ -507,20 +434,25 @@ def draw_rect_alpha(surface, color, shape_surf, rect):
 
 
 def start_sim(id):
-    window = pygame.display.set_mode((1920, 1080), FULLSCREEN | DOUBLEBUF)
 
-    global SIM_WIDTH, SIM_HEIGHT, new_date, distance_graphImg, anomaly_graphImg
+    global SIM_WIDTH, SIM_HEIGHT, distance_graphImg, anomaly_graphImg
     count = 0
     c = 0
 
     first_run = True
     show_menu = False
+
+    window = pygame.display.set_mode((1920, 1080), FULLSCREEN | DOUBLEBUF)
+
     leftwidth = window.get_width() * 0.7
     leftheight = window.get_height() * 0.95
-    height = window.get_height()
-    rightrect = (leftwidth, 0, leftwidth, height)
 
     SIM_WIDTH, SIM_HEIGHT = leftwidth, leftheight
+
+    height = window.get_height()
+
+    # rectangle for the menu
+    rightrect = (leftwidth, 0, leftwidth, height)
 
     right_surf = pygame.Surface(pygame.Rect(rightrect).size, pygame.SRCALPHA)
 
@@ -545,7 +477,7 @@ def start_sim(id):
         , reset_all_vals, graph_btn, dropdown]
 
     planet_info_btn.active = True
-    
+
     fps = 60
     # --------------------------CREATING WIDGETS----------------------------------------------------#
     date_textbox, sliders, planet_dropdown, theme_dropdown, side_labels, val_outputs, \
@@ -573,7 +505,7 @@ def start_sim(id):
         # window.blit(space_backgroundImg, (0, 0))
 
         blit_line(f'FPS: {round(clock.get_fps())}', 20, 200, 'white')
-        jul_century = gregorian_to_julian(solar_system.year, solar_system.month, solar_system.day)
+        jul_century = gregorian_to_julian(solar_system.day, solar_system.month, solar_system.year)
 
         get_all_coords(jul_century, first_run)
 
@@ -631,9 +563,6 @@ def start_sim(id):
                         planet.orbital_points = []
                         planet.rotated_once = False
 
-
-
-
             else:
                 date_textbox.textColour = solar_system.sim_accent_colour
                 solar_system.date_edited = False
@@ -655,7 +584,6 @@ def start_sim(id):
                 if event.button == 5:  # scroll down: zoom out
                     if solar_system.zoom_out():
                         Body.SCALE *= 0.75
-                        # mercury_icon = pygame.transform.scale(mercury_icon, (mercury_icon.get_width() * 0.75, mercury_icon.get_height() * 0.75))
 
                         solar_system.update_scale(0.75)
 
@@ -708,8 +636,6 @@ def start_sim(id):
                         planet.rotated_once = False
                         solar_system.instances[planet_dropdown.selected + 1].rotated_once = False
                         default_vals_btn.active = False
-
-
 
 
                     elif reset_all_vals.isOver(pos):
@@ -836,7 +762,6 @@ def start_sim(id):
 
                 if submit_btn.active:
                     accent_colour = accents_dropdown.option_list[accents_dropdown.selected]
-                    solar_system.theme = theme_dropdown.selected
                     submit_btn.active = False
                     date_textbox.colour = solar_system.window_colour
                     date_textbox.textColour = accent_colour
@@ -845,7 +770,7 @@ def start_sim(id):
                         btn.given_bd_colour = accent_colour
                     solar_system.sim_accent_colour = accent_colour
 
-                    solar_system.check_theme()
+                    solar_system.change_theme(theme_dropdown.selected)
                     fps = float(fps_dropdown.option_list[fps_dropdown.selected])
 
                     for optionbox in [planet_dropdown, graphType_dropdown, metric_dropdown, body1_dropdown,
@@ -855,7 +780,7 @@ def start_sim(id):
                         optionbox.active_colour = solar_system.sim_accent_colour
                         optionbox.color = solar_system.overlay_colour
                     for graph in graphs:
-                        graph.bg_color = theme_colours[graphbg_dropdown.selected]
+                        graph.bg_color = graph.colours[graphbg_dropdown.selected]
 
                         # graph.line_color = theme_colours[graph_optionbox2.selected]
                     solar_system.distance_metric = metric_dropdown.option_list[metric_dropdown.selected]
@@ -926,10 +851,12 @@ def start_sim(id):
                         if c > 20:
 
                             if graphType_dropdown.selected == 0:
-                                planet_distance = calculate_distance(
-                                    solar_system.instances[body1_dropdown.selected + 1],  # excludes the sun
-                                    solar_system.instances[body2_dropdown.selected])
-                                planet_distance = convert_to_km(planet_distance, solar_system.distance_metric)
+                                body_1, body_2 =  solar_system.instances[body1_dropdown.selected + 1],  solar_system.instances[body2_dropdown.selected]
+                                planet_distance = calculate_distance(body_1.getx(), body_1.gety(), body_2.getx(), body_2.gety())
+
+
+                                if solar_system.distance_metric == 'KM':
+                                    planet_distance = convert_to_km(planet_distance)
                                 distance_graph.values.append(planet_distance)
 
                                 animation.FuncAnimation(plt.gcf(), distance_graph.plot(), interval=500)
@@ -978,5 +905,5 @@ def start_sim(id):
 
 if __name__ == '__main__':
     pass
-    # start_sim('PyAdmin727')
+start_sim('PyAdmin727')
 
