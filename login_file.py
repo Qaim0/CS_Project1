@@ -4,6 +4,7 @@ from PIL import ImageTk, Image
 from database_init import conn, cursor
 from admin import admin_window
 from authentication import user_exists, user_has_access, username_exists
+from main_simulation import main
 my_grey = "#333333"
 my_orange = "#ee8968"
 my_font = "Gotham"
@@ -65,8 +66,7 @@ def attempt_login(w, entry_id, entry_password):
             if entry_id == "PyAdmin727": # if the admin logs in
                 admin_window() # open admin window
             else: # if user logs in
-                # START SIMULATION
-                pass
+                main(entry_id)
 
         else: # if user doesn't have access
             answer = messagebox.askquestion(message=

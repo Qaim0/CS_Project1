@@ -1,6 +1,5 @@
 import matplotlib
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
 from matplotlib.ticker import FormatStrFormatter
 
 
@@ -24,36 +23,23 @@ class Graph:
         self.xlabel = ''
         self.ylabel = ''
         self.lables = [self.xlabel, self.ylabel]
-        self.colours = ['#242424', '#0C0F1A', 'white']
-
+        #           dark standard  dark blue   white
+        self.colours = ['#242424', '#0C0F1A', '#cdcbcd']
 
         self.graph = plt.figure()
         self.ax = self.graph.add_subplot(1, 1, 1)
-        plt.title('Sentiment analysis')
-
-
-
-
-
-
-
-
-
-
-
-        # Setting the background color of the plot
-        # using set_facecolor() method
 
 
         plt.figure(figsize=(7, 5))
 
 
     def plot(self):
+        # set tick colours
         matplotlib.rc('xtick', color=self.line_color)
         matplotlib.rc('ytick', color=self.line_color)
 
 
-
+        # graph x adn y coords
         self.x.append(self.count)
         self.y.append(self.values[self.count])
         self.count += 1
@@ -61,7 +47,7 @@ class Graph:
         plt.cla()
 
 
-
+        # set label text and colours
         self.xlabel = plt.xlabel(self.xlabel_txt)
         self.ylabel = plt.ylabel(self.ylabel_txt)
         self.xlabel.set_color(self.line_color)
@@ -69,18 +55,18 @@ class Graph:
 
 
 
-
+        # plot the graph
         plt.plot(self.x, self.y, color=self.line_color)
-        self.ax.yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
 
-
+        # save an image of the graph
         plt.savefig(f'{self.name}.png', facecolor=self.bg_color, transparent=True, dpi=70)
 
     def clear_graph(self):
+        # reset all values
         self.x = []
         self.y = []
         self.count = 0
-        self.values = [] # clears data for the graph
+        self.values = []
 
 # distance_graph = plt.figure()
 # distance_graph.add_subplot(1, 1, 1)

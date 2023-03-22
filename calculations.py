@@ -73,12 +73,11 @@ def calculate_true_anomaly(anomaly_arg):
     try:
         k = math.pi / 180.0
         true_anomaly = 2 * (math.atan(anomaly_arg) / k)
-        print(true_anomaly)
         return round(true_anomaly, 3)
     except Exception:
         print('Error')
 
-def increment_date(year, month, day):
+def increment_date(day, month, year):
     if month == 12 and day > 31: # end of the year
         year += 1
         month = 1
@@ -86,7 +85,7 @@ def increment_date(year, month, day):
     elif day > 31: # end of the month
         month += 1
         day = 1
-    return year, month, day
+    return day, month, year
 # Deriving E from equation for M
 def calc_ecc_anomaly(e, M): # e: Eccentricity, M: Mean anomaly
     try:
@@ -132,16 +131,21 @@ def calculate_radius_vector(a, e, E):
     except Exception:
         print('Error')
 # to_radians(-230.7)
-print(calculate_radius_vector('hello', 0.2056, 192))
-def calculate_elements(planet, jul_centuries):
+def calculate_elements(planet, s_m, e, default_vals, jul_centuries):
+    semi_major = s_m
+    eccentricity = e
+
+
     i = planet_lst.index(planet) # index of the planet
     planet_elements = all_planetElements[i] # use index to find the elements for the planet
     planet_rates = all_planetRates[i]
 
-    # Semi major axis (a)
-    semi_major = planet_elements[0] + (planet_rates[0] * jul_centuries)
-    # Eccentricity (e)
-    eccentricity = planet_elements[1] + (planet_rates[1] * jul_centuries)
+
+    if default_vals: # only calculate these if the planet uses default values
+        # Semi major axis (a)
+        semi_major = planet_elements[0] + (planet_rates[0] * jul_centuries)
+        # Eccentricity (e)
+        eccentricity = planet_elements[1] + (planet_rates[1] * jul_centuries)
 
     # ORBIT INCLINATION (i)
     orbit_incl = planet_elements[2] + (planet_rates[2] * jul_centuries)
@@ -177,11 +181,8 @@ def calculate_elements(planet, jul_centuries):
     # RADIUS VECTOR
     radius_vector = calculate_radius_vector(semi_major, eccentricity, eccentric_anomaly)
 
-    if round(long_perihelion, 3) == 131.602 and round(long_asc_node, 3) == 76.680 and round(true_anomaly, 3)\
-            == 61.340 and round(radius_vector, 3) == 0.721:
-        print(orbit_incl)
     return semi_major, eccentricity, orbit_incl, long_asc_node, long_perihelion, \
-           true_anomaly, radius_vector
+            true_anomaly, radius_vector
 
 
 

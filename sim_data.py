@@ -1,7 +1,7 @@
 
 # main window colour, overlay colour
 dark_grey_colours = ['black', (36, 36, 36)]  # black and grey
-grey_colours = [(220, 220, 220), (36, 36, 36)]  # black and grey
+light_grey_colours = [(220, 220, 220), (36, 36, 36)]  # light grey and grey
 dark_blue_colours = ['#05070f', (12, 15, 26)]  # dark blue and darker blue
 
 
@@ -369,5 +369,8 @@ neptune_stats = {
 
 }
 
-planet_stats = [sun_stats, mercury_stats, venus_stats, earth_stats, mars_stats, jupiter_stats, saturn_stats, uranus_stats, neptune_stats]
-planet_info = [sun_info, mercury_info, venus_info, earth_info, mars_info, jupiter_info, saturn_info, uranus_info, neptune_info]
+body_stats = [sun_stats, mercury_stats, venus_stats, earth_stats, mars_stats,
+              jupiter_stats, saturn_stats, uranus_stats, neptune_stats]
+
+body_info = [sun_info, mercury_info, venus_info, earth_info, mars_info,
+             jupiter_info, saturn_info, uranus_info, neptune_info]
